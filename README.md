@@ -8,5 +8,6 @@ Maskani is a Swahili word used by locals to describe a place where unemployed in
 1. Aly Mtsumi
 2. Hillary Oyaro
 3. Jackson Muendo
+
 All the members will be actively involved in every step of the development process because we have similar skills and would like to guide each other during the process.
 
