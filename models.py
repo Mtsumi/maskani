@@ -1,11 +1,13 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+
+import datetime
 import dateutil.parser
 
 app = Flask(__name__)
 app.config.from_object('config')
 
-db = SQlAlchemy(app)
+db = SQLAlchemy(app)
 
 #Creating a class model of Database
 class Fundi(db.Model):
@@ -60,7 +62,7 @@ class Order(db.Model):
 	status = db.Column(db.Boolean, nullable=False, Default=False)
 	completed = db.Column(db.Boolean, nullable=False, Default=False)
 	date_created = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-	date_due = db.Column(db.DateTime, default=datetime.utcnow + 5*, nullable=False)
+	date_due = db.Column(db.DateTime, default=datetime.utcnow + datetime.timedelta(hours=6), nullable=False)
 
 	client_id = db.Column(db.Integer, db.ForeignKey("clients.id"), nullable=False)
 	fundi_id = db.Column(db.Integer, db.ForeignKey("fundis.id"), nullable=False)
