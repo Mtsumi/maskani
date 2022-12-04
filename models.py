@@ -5,14 +5,12 @@ import datetime
 import dateutil.parser
 
 app = Flask(__name__)
-app.config.from_object('config')
+#app.config.from_object('config')
 
 db = SQLAlchemy(app)
 
 #Creating a class model of Database
 class Fundi(db.Model):
-    """ Fundi Model
-					"""
 	__tablename__ = 'fundis'
 
 	id = db.Column(db.Integer, primary_key=True)
