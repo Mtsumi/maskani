@@ -8,12 +8,6 @@ DEBUG = True
 
 # Connect to the database
 SQLALCHEMY_DATABASE_URI = 'postgresql://postgres@localhost:5432/maskani'
-<<<<<<< Updated upstream
-=======
 SQLALCHEMY_TRACK_MODIFICATIONS = False
-#=======
-#configuration--database(postgress) and SQLAlchemy
-#SQLALCHEMY_DATABASE_URI = 'postgresql://postgres@localhost:5432/maskani'
->>>>>>> Stashed changes
-SQLALCHEMY_TRACK_MODIFICATIONS = False
+
 
