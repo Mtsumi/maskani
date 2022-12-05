@@ -1,4 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask_wtf import FlaskForm
+from wtforms import StringField,PasswordField,BooleanField
+from wtforms.validators import InputRequired,Email,Length
 from .models import Client,Fundi
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
@@ -7,9 +10,15 @@ from flask_login import login_user, login_required, logout_user, current_user
 
 auth = Blueprint('auth', __name__)
 
+class LoginForm(FlaskForm):
+    username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
+    password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
+    remember = BooleanField('remember me')
+
 
 @auth.route('/login/clients', methods=['GET', 'POST'])
 def login():
+    form = LoginForm()
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
@@ -25,7 +34,7 @@ def login():
         else:
             flash('Email does not exist.', category='error')
 
-    return render_template("login.html", user=current_user)
+    return render_template("login.html", form=form,user=current_user)
 
 @auth.route('/login/fundis', methods=['GET', 'POST'])
 def login():

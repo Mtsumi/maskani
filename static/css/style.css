@@ -1295,8 +1295,8 @@ body.mobile-nav-active #mobile-nav-toggle {
 }
 
 #contact .form #sendmessage {
-  color: #18d26e;
-  border: 1px solid #18d26e;
+  color: #f4540a;
+  border: 1px solid #f4540a;
   display: none;
   text-align: center;
   padding: 15px;
@@ -1337,7 +1337,7 @@ body.mobile-nav-active #mobile-nav-toggle {
 }
 
 #contact .form button[type="submit"] {
-  background: #18d26e;
+  background: #f4540a;
   border: 0;
   padding: 10px 30px;
   color: #fff;
@@ -1346,7 +1346,7 @@ body.mobile-nav-active #mobile-nav-toggle {
 }
 
 #contact .form button[type="submit"]:hover {
-  background: #13a456;
+  background: #f4540a;
 }
 
 /*--------------------------------------------------------------
@@ -1377,7 +1377,7 @@ body.mobile-nav-active #mobile-nav-toggle {
   font-family: "Montserrat", sans-serif;
   font-weight: 700;
   letter-spacing: 3px;
-  border-left: 4px solid #18d26e;
+  border-left: 4px solid #f4540a;
 }
 
 #footer .footer-top .footer-info p {
@@ -1404,7 +1404,7 @@ body.mobile-nav-active #mobile-nav-toggle {
 }
 
 #footer .footer-top .social-links a:hover {
-  background: #18d26e;
+  background: #f4540a;
   color: #fff;
 }
 
@@ -1432,7 +1432,7 @@ body.mobile-nav-active #mobile-nav-toggle {
 }
 
 #footer .footer-top h4::after {
-  background: #18d26e;
+  background: #f4540a;
   width: 60px;
 }
 
@@ -1465,7 +1465,7 @@ body.mobile-nav-active #mobile-nav-toggle {
 }
 
 #footer .footer-top .footer-links ul a:hover {
-  color: #18d26e;
+  color: #f4540a;
 }
 
 #footer .footer-top .footer-contact {
@@ -1487,7 +1487,7 @@ body.mobile-nav-active #mobile-nav-toggle {
 }
 
 #footer .footer-top .footer-newsletter input[type="submit"] {
-  background: #18d26e;
+  background: #f4540a;
   border: 0;
   width: 35%;
   padding: 6px 0;
@@ -1498,7 +1498,7 @@ body.mobile-nav-active #mobile-nav-toggle {
 }
 
 #footer .footer-top .footer-newsletter input[type="submit"]:hover {
-  background: #13a456;
+  background: #f4540a;
 }
 
 #footer .copyright {
