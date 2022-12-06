@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 #import dateutil.parser
 
 app = Flask(__name__)
-#app.config.from_object('config')
+app.config.from_object('config')
 
 db = SQLAlchemy(app)
 
