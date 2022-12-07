@@ -9,7 +9,7 @@ bootstrap = Bootstrap(app)
 
 @app.route("/")
 def index():
-    return render_template("pages/index.html")
+    return render_template("/index.html")
 
 @app.route("/sign")
 def sign():
@@ -19,3 +19,6 @@ def sign():
 def edit_client():
     return "<h1> This is the where client comes after login <h1>"
 
+
+if __name__ == '__main__':
+    app.run(debug=True)
