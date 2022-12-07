@@ -1,13 +1,6 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-
+from . import db
 from datetime import datetime, timedelta
 #import dateutil.parser
-
-app = Flask(__name__)
-app.config.from_object('config')
-
-db = SQLAlchemy(app)
 
 #Creating a class model of Database
 class Fundi(db.Model):
@@ -27,7 +20,7 @@ class Fundi(db.Model):
 	
 	def __repr__(self):
 		return f'<Fundi {self.id} {self.first_name} + {self.last_name}>'
-
+#db.create_all()
 
 class Client(db.Model):
 	"""
@@ -42,12 +35,13 @@ class Client(db.Model):
 	image_link = db.Column(db.String(500), nullable=True)
 	password = db.Column(db.String(80), nullable=False)
 	location = db.Column(db.String(50), nullable=False)
-	service = db.Column(db.String(50), nullable=False)
+	#service = db.Column(db.String(50), nullable=False)
 
 	orders = db.relationship("Order", backref = "clients", lazy=True, cascade="all, delete-orphan")
 
 	def __repr__(self):
 		return f'<Client {self.id} {self.first_name} + {self.last_name}>'
+#db.create_all()
 
 class Order(db.Model):
 	"""Order class definition"""
@@ -64,3 +58,5 @@ class Order(db.Model):
 
 	client_id = db.Column(db.Integer, db.ForeignKey("clients.id"), nullable=False)
 	fundi_id = db.Column(db.Integer, db.ForeignKey("fundis.id"), nullable=False)
+
+#db.create_all()

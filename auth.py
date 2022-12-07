@@ -1,10 +1,9 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_wtf import FlaskForm
-from wtforms import StringField,PasswordField,BooleanField
-from wtforms.validators import InputRequired,Email,Length
+from wtforms import StringField, PasswordField, BooleanField
+from wtforms.validators import InputRequired, Email, Length
 from models import Client, Fundi, db
 from werkzeug.security import generate_password_hash, check_password_hash
-from app import *
 from flask_login import login_user, login_required, logout_user, current_user
 
 
