@@ -1,19 +1,21 @@
 {% extends "bootstrap/base.html" %}
+{% block page_content %}
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}
 Sign Up
 {% endblock %}
 
-{% block styles %}
+{% block styles %} -->
 {{super()}}
-<link rel="stylesheet" href="{{url_for('.static', filename='signin.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='signin.css')}}">
+<!-- <link rel="stylesheet" href="../static/css/signin.css"> -->
 {% endblock %}
 
 {% block content %}
 <div class="container">
 
-  <form class="form-signin" method="POST" action="/signup">
+  <form class="form-signin" method="POST" action="/clients/sign_up">
     <h2 class="form-signin-heading">Sign Up</h2>
     {{ form.hidden_tag() }}
     {{ wtf.form_field(form.email) }}
@@ -24,4 +26,5 @@ Sign Up
   </form>
 
 </div> <!-- /container -->
+{% endblock %}
 {% endblock %}

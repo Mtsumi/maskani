@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_wtf import FlaskForm
 from wtforms import StringField,PasswordField,BooleanField
 from wtforms.validators import InputRequired,Email,Length
-from models import Client, Fundi
+from models import Client, Fundi, db
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import *
 from flask_login import login_user, login_required, logout_user, current_user
@@ -54,7 +54,7 @@ def sign_up():
             flash('Account succesfully created!', category='success')
             return redirect(url_for('edit_client'))
 
-    return render_template("sign_up.html", user=current_user)
+    return render_template("sign_up.html", form=form)
 
 @auth.route('/sign-up/fundis', methods=['GET', 'POST'])
 def sign_up_fundi():
