@@ -3,10 +3,9 @@ from flask_bootstrap import Bootstrap
 from auth import *
 
 app = Flask(__name__)
-bootstrap = Bootstrap(app)
 app.register_blueprint(auth)
 app.config.from_object('config')
-
+bootstrap = Bootstrap(app)
 
 @app.route("/")
 def index():
