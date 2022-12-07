@@ -2,9 +2,14 @@ from flask import Flask, render_template
 from flask_bootstrap import Bootstrap
 from auth import *
 
+<<<<<<< Updated upstream
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
 app.register_blueprint(auth)
+=======
+app = Flask(__name__) 
+
+>>>>>>> Stashed changes
 app.config.from_object('config')
 
 
@@ -12,6 +17,7 @@ app.config.from_object('config')
 def index():
     return render_template("pages/index.html")
 
+<<<<<<< Updated upstream
 @app.route("/sign")
 def sign():
     return render_template("signup.html")
@@ -20,3 +26,8 @@ def sign():
 def edit_client():
     return "<h1> This is the where client comes after login <h1>"
 
+=======
+
+if __name__ == '__main__':
+    app.run(debug=True)
+>>>>>>> Stashed changes
