@@ -1,16 +1,14 @@
-<!DOCTYPE html>
 {% extends "bootstrap/base.html" %}
-{% block page_content %}
 
 {% import "bootstrap/wtf.html" as wtf %}
-
+{% block page_content %}
 {% block title %}
 Sign Up
 {% endblock %}
 
 {% block styles %} -->
 {{super()}}
-<link rel="stylesheet" href="{{url_for('static', filename='signin.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/signin.css')}}">
 <!-- <link rel="stylesheet" href="../static/css/signin.css"> -->
 {% endblock %}
 
@@ -26,7 +24,5 @@ Sign Up
     <button class="btn btn-lg btn-primary btn-block" type="submit">Sign Up</button>
   </form>
 
-</div> <!-- /container -->
-<!-- {% endblock %} -->
-
+</div>
 {% endblock %}
