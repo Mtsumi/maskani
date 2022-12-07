@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>{% block title %}Maskani yetu{% endblock title %}</title>
+  <title>{% block title %}Maskani Yetu{% endblock %}</title>
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <meta content="" name="keywords">
   <meta content="" name="description">
@@ -39,8 +39,7 @@
 
       <div id="logo" class="pull-left">
         <h1> <img src="static/img/maskani_logo4.png" alt="" title="" /></a> <a href="#intro" class="scrollto">Maskani</a></h1>
-        <!-- image logo -->
-        <!-- <a href="#intro"><img src="../static/img/logo.png" alt="" title="" /></a>-->
+        
       </div>
 
       <nav id="nav-menu-container">
@@ -65,7 +64,7 @@
   </header><!-- #header -->
 
 
-
+  {% block page_content %}{% endblock %}
   <!--==========================
     Footer
   ============================-->
@@ -76,7 +75,7 @@
 
           <div class="col-lg-3 col-md-6 footer-info">
             <h3>Maskani</h3>
-            <p>Our community appreciate and value you hardwork.We connect our client to vetted Fundi to offer technical solution.Do you have what it takes to get you hands dirty and solve problems.We are looking for you.You hard work shall be recognize through Maskani Hero.We are Customer obssessed.We would love to here from them and make their lives easier by doing what they love.</p>
+            <p>Our community appreciates and values your hardwork. We connect our clients to vetted Fundis to offer technical solutions. Do you have what it takes to get you hands dirty and solve problems? We are looking for you. You hard work shall be recognized through Maskani Hero. We are Customer obssessed. We would love to hear from you and make your lives easier by doing what you love.</p>
           </div>
 
           <div class="col-lg-3 col-md-6 footer-links">
@@ -136,7 +135,6 @@
       <!--<-- Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>-->
       </div>
     </div>
- 
   </footer><!-- #footer -->
 
   <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
