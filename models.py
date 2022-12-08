@@ -12,7 +12,7 @@ class Fundi(db.Model):
 	phone_number = db.Column(db.String(50), nullable=False)
 	email = db.Column(db.String(120), nullable=False)
 	image_link = db.Column(db.String(500), nullable=False, default='default_fundi.jpg')
-	password = db.Column(db.String(80), nullable=False)
+	password = db.Column(db.String(120), nullable=False)
 	location = db.Column(db.String(50), nullable=False)
 	service = db.Column(db.String(50), nullable=False)
 
@@ -33,7 +33,7 @@ class Client(db.Model):
 	phone_number = db.Column(db.String(50), nullable=True)
 	email = db.Column(db.String(120), nullable=False)
 	image_link = db.Column(db.String(50), nullable=False, default='default.jpg')
-	password = db.Column(db.String(80), nullable=False)
+	password = db.Column(db.String(120), nullable=False)
 	location = db.Column(db.String(50), nullable=True)
 	
 	orders = db.relationship("Order", backref = "clients", lazy=True, cascade="all, delete-orphan")

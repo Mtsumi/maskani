@@ -10,3 +10,4 @@ app.config.from_object(Config)
 bootstrap = Bootstrap(app)
 
 db = SQLAlchemy(app)
+app.app_context().push()
