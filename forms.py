@@ -42,9 +42,9 @@ class RegisterForm(FlaskForm):
         validators=[
             DataRequired(), 
             EqualTo('password')])
-    image_link = image_link = StringField(
+    image_link = StringField(
         'Image link',
-        default='',
+        default='default.jpg',
         validators=[
             Optional(),
             URL()]
