@@ -18,11 +18,8 @@ def index():
 
 @app.route('/clients/sign_up', methods=['GET', 'POST'])
 def sign_up():
-    form = RegisterForm()
-    if request.method == "GET":
-        return render_template('sign_up.html', title='Register', form=form)
-
-    else:
+    form = ClientRegisterForm()
+    if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data, method='sha256')
         new_user = Client(
                 first_name=form.first_name.data,
@@ -35,7 +32,9 @@ def sign_up():
         #login_user(new_user, remember=True)
         flash('Your account has been created! You are now able to log in', 'success')
         return redirect(url_for('edit_client'))
-        
+    flash('Something went wrong with validation')
+    return render_template('sign_up.html', title='Register', form=form)
+
         
 
 @app.route("/sign")
