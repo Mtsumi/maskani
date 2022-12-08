@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm 
-from wtforms import StringField, PasswordField, BooleanField, SelectField
-from wtforms.validators import Email, DataRequired, InputRequired, Length, Optional, Regexp, URL
+from wtforms import StringField, PasswordField, BooleanField, SelectField, SubmitField
+from wtforms.validators import Email, EqualTo, DataRequired, InputRequired, Length, Optional, Regexp, URL
 #from werkzeug.security import generate_password_hash, check_password_hash
 #from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
@@ -15,6 +15,33 @@ class LoginForm(FlaskForm):
     remember = BooleanField('remember me')
 
 class RegisterForm(FlaskForm):
+    
+    first_name = StringField(
+        'First Name', 
+        validators=[
+            InputRequired(), 
+            Length(min=4, max=15)])
+    last_name = StringField(
+        'Last Name', 
+        validators=[
+            InputRequired(),
+            Length(min=4, max=15)])
+    email = StringField(
+        'Email',
+        validators=[
+            InputRequired(), 
+            Email(message='Invalid email'), 
+            Length(max=50)])
+    password = PasswordField(
+        'Password', 
+        validators=[
+            InputRequired(), 
+            Length(min=8, max=80)])
+    confirm_password = PasswordField(
+        'Confirm Password',
+        validators=[
+            DataRequired(), 
+            EqualTo('password')])
     image_link = image_link = StringField(
         'Image link',
         default='',
@@ -22,10 +49,6 @@ class RegisterForm(FlaskForm):
             Optional(),
             URL()]
     )
-    email = StringField('Email', validators=[InputRequired(), Email(message='Invalid email'), Length(max=50)])
-    first_name = StringField('First Name', validators=[InputRequired(), Length(min=4, max=15)])
-    last_name = StringField('Last Name', validators=[InputRequired(), Length(min=4, max=15)])
-    password = PasswordField('Password', validators=[InputRequired(), Length(min=8, max=80)])
     phone_number = StringField(
         'Phone Number',
         validators=[
@@ -41,8 +64,8 @@ class RegisterForm(FlaskForm):
             DataRequired()],
         choices=[
             ('Nyali', 'nyali'),
-            ('Kisauni', 'Bamburi'),
-            ('Mtwapa','Shanzu'),
-            ('Changamwe', 'Magongo'),
-            ('Likoni', 'Caltex')
-        ])
+            ('Kisauni', 'Bamburi'), 
+            ('Mtwapa','Shanzu'), 
+            ('Changamwe', 'Magongo'), 
+            ('Likoni', 'Caltex')])
+    submit = SubmitField('Sign Up')

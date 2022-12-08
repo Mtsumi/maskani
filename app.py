@@ -8,8 +8,7 @@ from . import app, db
 
 
 from .models import *
-# with app.app_context():
-#     db.create_all()
+
 
 db.create_all()
 
@@ -23,22 +22,19 @@ def sign_up():
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data, method='sha256')
         new_user = Client(
-            image_link=form.image_link.data,
-            email=form.email.data,
             first_name=form.first_name.data,
             last_name=form.last_name.data,
+            email=form.email.data,
             password=hashed_password,
-            phone_number=form.phone_number.data,
-            location=form.location.data
             )
+        print("niko hapa")
         db.session.add(new_user)
         db.session.commit()
-
-        #return '<h1>New user has been created!</h1>'
+        login_user(new_user, remember=True)
+        flash('Your account has been created! You are now able to log in', 'success')
         return redirect(url_for('edit_client'))
-        #return '<h1>' + form.username.data + ' ' + form.email.data + ' ' + form.password.data + '</h1>'
-
-    return render_template('sign_up.html', form=form)
+        
+    return render_template('sign_up.html', title='Register', form=form)
         # if request.method == 'POST':
         #     email = request.form.get('email')
         #     first_name = request.form.get('firstName')
@@ -82,6 +78,14 @@ def sign_up():
 @app.route("/sign")
 def sign():
     return render_template("signup.html")
+
+@app.route("/clients/login")
+def client_login():
+    return "<h1>This is the login route</h1>"
+
+@app.route("/about")
+def about():
+    return "<h1>This is the about page</h1>"
 
 @app.route("/clients/<int:client_id>/edit")
 def edit_client(client_id):
