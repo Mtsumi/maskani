@@ -37,7 +37,11 @@ body {
   }
   
   a.article-title:hover {
+<<<<<<< HEAD
     color: #d8a313;
+=======
+    color: #428bca;
+>>>>>>> main
     text-decoration: none;
   }
   
