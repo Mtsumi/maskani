@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, flash, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user
 #, login_required, logout_user, current_user
-from .forms import *
+from .forms import ClientRegisterForm, FundiRegisterForm
 from . import app, db
 
 
@@ -10,7 +10,7 @@ from . import app, db
 from .models import *
 
 
-db.create_all()
+#db.create_all()
 
 @app.route("/")
 def index():
@@ -20,30 +20,24 @@ def index():
 
 @app.route('/clients/sign_up', methods=['GET', 'POST'])
 def sign_up():
-    form = RegisterForm()
+    form = ClientRegisterForm()
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data, method='sha256')
         new_user = Client(
-            first_name=form.first_name.data,
-            last_name=form.last_name.data,
-            email=form.email.data,
-            password=hashed_password,
-            )
-        print("niko hapa")
+                first_name=form.first_name.data,
+                last_name=form.last_name.data,
+                email=form.email.data,
+                password=hashed_password,
+                )
         db.session.add(new_user)
         db.session.commit()
-        login_user(new_user, remember=True)
+        #login_user(new_user, remember=True)
         flash('Your account has been created! You are now able to log in', 'success')
         return redirect(url_for('edit_client'))
-        
+    flash('Something went wrong with validation')
     return render_template('sign_up.html', title='Register', form=form)
-        # if request.method == 'POST':
-        #     email = request.form.get('email')
-        #     first_name = request.form.get('firstName')
-        #     last_name = request.form.get('lastName')
-        #     password = request.form.get('password')
-        #     password2 = request.form.get('password2')
 
+<<<<<<< HEAD
     #         print("niko hapa sai")
             
     #         user = Client.query.filter_by(email=email).first()
@@ -83,18 +77,38 @@ def sign_up():
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data, method='sha256')
         new_user = Client(
+=======
+
+@app.route('/fundis/sign_up', methods=['GET', 'POST'])
+def fundi_signup():
+    form = FundiRegisterForm()
+    if form.validate_on_submit():
+        hashed_password = generate_password_hash(form.password.data, method='sha256')
+        new_user = Fundi(
+>>>>>>> main
                 first_name=form.first_name.data,
                 last_name=form.last_name.data,
                 email=form.email.data,
                 password=hashed_password,
+<<<<<<< HEAD
+=======
+                profession=form.profession.data,
+>>>>>>> main
                 )
         db.session.add(new_user)
         db.session.commit()
         #login_user(new_user, remember=True)
         flash('Your account has been created! You are now able to log in', 'success')
+<<<<<<< HEAD
         return redirect(url_for('edit_client'))
     flash('Something went wrong with validation')
     return render_template('sign_up.html', title='Register', form=form)
+=======
+        return redirect(url_for('edit_fundi'))
+    flash('Something went wrong with validation')
+    return render_template('fundi_sign_up.html', title='Register As A Fundi', form=form)
+        
+>>>>>>> main
 
         
 
@@ -128,8 +142,18 @@ def client_login():
 def about():
     return "<h1>This is the about page</h1>"
 
-@app.route("/clients/<int:client_id>/edit")
-def edit_client(client_id):
+@app.route("/clients/edit")
+def edit_client():
     return "<h1> This is the where client comes after login <h1>"
 
+<<<<<<< HEAD
+>>>>>>> main
+=======
+@app.route("/fundis/edit")
+def edit_fundi():
+    return "<h1> This is the where Fundi comes after login <h1>"
+
+@app.route("/fundis/login")
+def fundi_login():
+    return "<h1>This is the login route for fundis</h1>"
 >>>>>>> main

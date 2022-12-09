@@ -29,7 +29,11 @@ class Config(object):
     # CSRF token with wtforms
     #WTF_CSRF_ENABLED = True
 <<<<<<< HEAD
+<<<<<<< HEAD
     #WTF_CSRF_SECRET_KEY = 'wtf secret key'
+=======
+    #WTF_CSRF_SECRET_KEY = 'wtf secret key'
+>>>>>>> main
 =======
     #WTF_CSRF_SECRET_KEY = 'wtf secret key'
 >>>>>>> main
