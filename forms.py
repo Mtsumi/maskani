@@ -13,7 +13,7 @@ class ClientRegisterForm(FlaskForm):
     first_name = StringField('First Name', validators=[InputRequired(), Length(min=4, max=15)])
     last_name = StringField('Last Name',  validators=[InputRequired(),Length(min=4, max=15)])
     email = StringField('Email',validators=[InputRequired(), Email(message='Invalid email'), Length(max=50)])
-    password = PasswordField('Password', validators=[InputRequired(), Length(min=8, max=80)])
+    password = PasswordField('Password', validators=[InputRequired(), Length(min=8, max=200)])
     confirm_password = PasswordField('Confirm Password',validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('sign up')
 
