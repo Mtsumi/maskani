@@ -31,9 +31,9 @@
 
 <body>
 
-  <!--==========================
+  <!-- ==========================
     Header
-  ============================-->
+  ============================ -->
   <header id="header">
     <div class="container-fluid">
 
@@ -81,7 +81,7 @@
               <div class="carousel-content">
                 <h2>We are professional</h2>
                 <p>All our Fundis have been vetted and are devoted to help our customers.</p>
-                <a href="/get_started" class="btn-get-started">Get Started Custom</a>
+                <a href="{{ url_for('get_started') }}" class="btn-get-started">Get Started</a>
               </div>
             </div>
           </div>
@@ -92,7 +92,7 @@
               <div class="carousel-content">
                 <h2>Customer satisfaction is in our Dna</h2>
                 <p>We are obsessed with providing solutions to whatever problem you are facing.</p>
-                <a href="/get_started" class="btn-get-started scrollto">Get Started</a>
+                <a href="{{ url_for('sign_up') }}" class="btn-get-started">Sign up Today!</a>
               </div>
             </div>
           </div>
@@ -103,7 +103,7 @@
               <div class="carousel-content">
                 <h2>Come and Build with us !</h2>
                 <p>Are you a Fundi? Sign up to Maskani and get paid for doing what you're good at.</p>
-                <a href="/get_started" class="btn-get-started scrollto">Get Started</a>
+                <a href="{{ url_for('fundi_signup') }}" class="btn-get-started">Get Hired</a>
               </div>
             </div>
           </div>
@@ -114,7 +114,7 @@
               <div class="carousel-content">
                 <h2>Karibu Maskani</h2>
                 <p>We're here to get our hands dirty for you!</p>
-                <a href="/get_started" class="btn-get-started scrollto">Get Started</a>
+                <a href="{{ url_for('get_started') }}" class="btn-get-started">Get Started</a>
               </div>
             </div>
           </div>
@@ -125,7 +125,7 @@
               <div class="carousel-content">
                 <h2>Come Get Your Fix!</h2>
                 <p>Need a Fix? Well, not that kind. Post your issue and we will fix it!</p>
-                <a href="#featured-services" class="btn-get-started scrollto">Get Started</a>
+                <a href="{{ url_for('client_login') }}" class="btn-get-started">Post a job</a>
               </div>
             </div>
           </div>

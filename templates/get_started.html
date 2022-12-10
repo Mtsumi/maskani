@@ -19,8 +19,22 @@
       border-color: #f4540a;
       box-shadow: 0 6px 12px rgba(0,0,0,0.16), 0 6px 12px rgba(0,0,0,0.23);
     }
-    body {
+    /* body {
       background-size: cover
+    } */
+    @keyframes photo-reel {
+      0% {
+        background-image: url("../static/img/get_started/stima.jpg");
+      }
+      25% {
+        background-image: url("../static/img/get_started/pipe.jpg");
+      }
+      50% {
+        background-image: url("../static/img/get_started/fundi.jpg");
+      }
+    }
+    #photo-reel {
+      animation: photo-reel 30s linear infinite;
     }
 </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -38,28 +52,7 @@
         right: 200
       });
     })
-    $(document).ready(function() {
-      var images = [];
-      var index = 0;
-      // fetch the list of images from the server
-      $.ajax({
-        url: './static/img/get_started/',
-        success: function(data) {
-          // parse the list of images from the server response
-          $(data).find('a:contains(".jpg")').each(function() {
-            var filename = $(this).attr('href');
-            images.push('./static/img/get_started/' + filename);
-          });
-
-          // change the background image every 5 seconds
-          setInterval(function() {
-            $('body').css('background-image', 'url(' + images[index] + ')');
-            index = (index + 1) % images.length;
-          }, 5000);
-        }
-      });
-    });
-  </script>
+      </script>
 </head>
 <body>
 

@@ -1,8 +1,8 @@
-from flask import Flask, render_template, request, flash, redirect, url_for
+from flask import render_template, request, flash, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user
-#, login_required, logout_user, current_user
-from .forms import ClientRegisterForm, FundiRegisterForm,LoginForm
+from flask_login import login_user, current_user
+#, login_required, logout_user, 
+from .forms import ClientRegisterForm, FundiRegisterForm, LoginForm
 from . import app, db
 
 
@@ -18,6 +18,8 @@ def index():
 
 @app.route('/clients/sign_up', methods=['GET', 'POST'])
 def sign_up():
+    if current_user.is_authenticated:
+        return redirect(url_for('mywork'))
     form = ClientRegisterForm()
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data, method='sha256')
@@ -29,7 +31,7 @@ def sign_up():
                 )
         db.session.add(new_user)
         db.session.commit()
-        #login_user(new_user, remember=True)
+        login_user(new_user, remember=True)
         flash('Your account has been created! You are now able to log in', 'success')
         return redirect(url_for('client_login'))
     flash('Something went wrong with validation')
@@ -38,6 +40,8 @@ def sign_up():
 
 @app.route('/fundis/sign_up', methods=['GET', 'POST'])
 def fundi_signup():
+    if current_user.is_authenticated:
+        return redirect(url_for('mywork'))
     form = FundiRegisterForm()
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data, method='sha256')
@@ -57,27 +61,39 @@ def fundi_signup():
     return render_template('fundi_sign_up.html', title='Register As A Fundi', form=form)
         
 
-@app.route("/sign")
-def sign():
-    return render_template("signup.html")
-
-#@app.route("/clients/login")
-# def client_login():
-#    return "<h1>This is the login route</h1>"
 
 @app.route("/clients/login", methods=['GET', 'POST'])
 def client_login():
+    if current_user.is_authenticated:
+        return redirect(url_for('mywork'))
     form = LoginForm()
     if form.validate_on_submit():
-        if form.email.data == 'hillaryoyaroh@gmail.com' and form.password.data == 'serverless':
-            flash('You have been logged in!', 'success')
-            return redirect(url_for('mywork'))
+        user = Client.query.filter_by(email=form.email.data).first()
+        if user and check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember.data)
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('edit_client'))
         else:
-            flash('Login Unsuccessful. Please check username and password', 'danger')
-    return render_template('login.html', title='Login', form=form)
+            flash('Login Unsuccessful. Please check email and password', 'danger')
+    return render_template('login.html', title='Customer Login', form=form)
 
-@app.route("/clients/mywork")
-def mywork():
+@app.route("/fundis/login", methods=['GET', 'POST'])
+def fundi_login():
+    if current_user.is_authenticated:
+        return redirect(url_for('mywork'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = Fundi.query.filter_by(email=form.email.data).first()
+        if user and check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember.data)
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('edit_fundi'))
+        else:
+            flash('Login Unsuccessful. Please check email and password', 'danger')
+    return render_template('fundi_login.html', title='Fundi Login', form=form)
+
+@app.route("/clients/myorders")
+def myorders():
     return "<h1>My favourite Gigs</h1>"
 
 @app.route("/about")
@@ -92,9 +108,9 @@ def edit_client():
 def edit_fundi():
     return "<h1> This is the where Fundi comes after login <h1>"
 
-@app.route("/fundis/login")
-def fundi_login():
-    return "<h1>This is the login route for fundis</h1>"
+@app.route("/fundis/mywork")
+def mywork():
+    return "<h1>My Jobs</h1>"
 
 @app.route("/get_started")
 def get_started():

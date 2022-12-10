@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from .config import Config
 from flask_bootstrap import Bootstrap
+from flask_login import LoginManager
 
 # App Config.
 
@@ -10,4 +11,4 @@ app.config.from_object(Config)
 bootstrap = Bootstrap(app)
 
 db = SQLAlchemy(app)
-app.app_context().push()
+login_manager = LoginManager(app)

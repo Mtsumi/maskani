@@ -3,7 +3,7 @@ from wtforms import BooleanField, PasswordField, SelectField, SubmitField,  Stri
 from wtforms.validators import Email, EqualTo, DataRequired, InputRequired, Length, ValidationError
 from .models import *
 #from werkzeug.security import generate_password_hash, check_password_hash
-#from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+#from flask_login import UserMixin, login_user, login_required, logout_user, current_user
 
 
 # @login_manager.user_loader
@@ -36,7 +36,7 @@ class FundiRegisterForm(FlaskForm):
     first_name = StringField('First Name', validators=[InputRequired(), Length(min=4, max=15)])
     last_name = StringField('Last Name', validators=[InputRequired(), Length(min=4, max=15)])
     email = StringField('Email', validators=[InputRequired(), Email(message='Invalid email'), Length(max=50)])
-    choices = [(1, 'Plumber'), (2, 'Electrician'), (3, 'Painter'), (4, 'Mason'), (5, 'Carpenter')]
+    choices = [('plumber', 'Plumber'), ('electrician', 'Electrician'), ('painter', 'Painter'), ('mason', 'Mason'), ('carpenter', 'Carpenter')]
     profession = SelectField('Profession', validators=[DataRequired()], choices=choices)
     password = PasswordField('Password', validators=[InputRequired(), Length(min=8, max=80)])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])

@@ -1,9 +1,15 @@
-from . import db
+from . import db, login_manager
 from datetime import datetime, timedelta
+from flask_login import UserMixin
 #import dateutil.parser
 
+
+@login_manager.user_loader
+def load_user(user_id):
+	return Client.query.get(user_id)
+
 #Creating a class model of Database
-class Fundi(db.Model):
+class Fundi(db.Model, UserMixin):
 	__tablename__ = 'fundis'
 
 	id = db.Column(db.Integer, primary_key=True)
@@ -22,7 +28,7 @@ class Fundi(db.Model):
 		return f'<Fundi {self.id} {self.first_name} + {self.last_name}>'
 
 
-class Client(db.Model):
+class Client(db.Model, UserMixin):
 	"""
 	Client model definition"""
 	__tablename__ = 'clients'
