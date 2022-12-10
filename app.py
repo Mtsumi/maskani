@@ -95,3 +95,7 @@ def edit_fundi():
 @app.route("/fundis/login")
 def fundi_login():
     return "<h1>This is the login route for fundis</h1>"
+
+@app.route("/get_started")
+def get_started():
+    return render_template("get_started.html")
