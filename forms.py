@@ -10,11 +10,13 @@ from .models import *
 # def load_user(user_id):
 #     return User.query.get(int(user_id))
 
-class LoginForm(FlaskForm):
-    username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
-    password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
-    remember = BooleanField('remember me')
 
+class LoginForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    remember = BooleanField('Remember Me')
+    submit = SubmitField('Login')
+    
 class ClientRegisterForm(FlaskForm):
     
     first_name = StringField('First Name', validators=[InputRequired(), Length(min=4, max=15)])
