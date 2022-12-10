@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, flash, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user
 #, login_required, logout_user, current_user
-from .forms import ClientRegisterForm, FundiRegisterForm
+from .forms import ClientRegisterForm, FundiRegisterForm,LoginForm
 from . import app, db
 
 
@@ -10,7 +10,7 @@ from . import app, db
 from .models import *
 
 
-#db.create_all()
+db.create_all()
 
 @app.route("/")
 def index():
@@ -31,7 +31,7 @@ def sign_up():
         db.session.commit()
         #login_user(new_user, remember=True)
         flash('Your account has been created! You are now able to log in', 'success')
-        return redirect(url_for('edit_client'))
+        return redirect(url_for('client_login'))
     flash('Something went wrong with validation')
     return render_template('sign_up.html', title='Register', form=form)
 
@@ -61,13 +61,28 @@ def fundi_signup():
 def sign():
     return render_template("signup.html")
 
-@app.route("/clients/login")
+#@app.route("/clients/login")
+# def client_login():
+#    return "<h1>This is the login route</h1>"
+
+@app.route("/clients/login", methods=['GET', 'POST'])
 def client_login():
-    return "<h1>This is the login route</h1>"
+    form = LoginForm()
+    if form.validate_on_submit():
+        if form.email.data == 'hillaryoyaroh@gmail.com' and form.password.data == 'serverless':
+            flash('You have been logged in!', 'success')
+            return redirect(url_for('mywork'))
+        else:
+            flash('Login Unsuccessful. Please check username and password', 'danger')
+    return render_template('login.html', title='Login', form=form)
+
+@app.route("/clients/mywork")
+def mywork():
+    return "<h1>My favourite Gigs</h1>"
 
 @app.route("/about")
 def about():
-    return "<h1>This is the about page</h1>"
+    return"<h1>This is the about page</h1>"    
 
 @app.route("/clients/edit")
 def edit_client():
