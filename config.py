@@ -36,4 +36,3 @@ class Config(object):
 >>>>>>> main
 =======
     #WTF_CSRF_SECRET_KEY = 'wtf secret key'
->>>>>>> main

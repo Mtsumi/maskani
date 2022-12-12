@@ -1,56 +1,75 @@
-from . import db
+from . import db, login_manager
 from datetime import datetime, timedelta
-#import dateutil.parser
-from . import db
-from datetime import datetime, timedelta
+from flask_login import UserMixin
 #import dateutil.parser
 
+@login_manager.user_loader
+def load_user(user_id):
+    user = User.query.get(user_id)
+    if user.role == 'client':
+		
+        return Client.query.get(user_id)
+    elif user.role == 'fundi':
+        return Fundi.query.get(user_id)
+    else:
+        return None
+
 #Creating a class model of Database
-class Fundi(db.Model):
+
+class User(db.Model, UserMixin):
+    
+	id = db.Column(db.Integer, primary_key=True, unique=True)
+	first_name = db.Column(db.String(50), nullable=False)
+	last_name = db.Column(db.String(50), nullable=False)
+	email = db.Column(db.String(80), unique=True, nullable=False)
+	password = db.Column(db.String(200), nullable=False)
+	role = db.Column(db.String(40), nullable=False)
+	fundis = db.relationship('Fundi', backref = "fundis", lazy=True)
+	clients = db.relationship('Client', backref = "clients", lazy=True)
+
+
+
+class Fundi(db.Model, UserMixin):
 	__tablename__ = 'fundis'
 
 	id = db.Column(db.Integer, primary_key=True)
-	first_name = db.Column(db.String(50), nullable=False)
-	last_name = db.Column(db.String(50), nullable=False)
-	profession = db.Column(db.String(50), nullable=False)
+	user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+	skills = db.Column(db.String(50), nullable=True)
 	phone_number = db.Column(db.String(50), nullable=True)
-	email = db.Column(db.String(120), nullable=False)
 	image_link = db.Column(db.String(120), nullable=False, default='default_fundi.jpg')
-	password = db.Column(db.String(200), nullable=False)
 	location = db.Column(db.String(50), nullable=True)
 
 	jobs = db.relationship("Order", backref = "fundis", lazy=True, cascade="all, delete-orphan")
 	
+# This property returns the User object associated with this Fundi object
+	@property
+	def user(self):
+		return User.query.get(self.user_id)
+
 	def __repr__(self):
-		return f'<Fundi {self.id} {self.first_name} + {self.last_name}>'
+# Use the user property to access the first_name and last_name attributes
+		return f'<Fundi {self.id} {self.user.first_name} + {self.user.last_name}>'
 
-
-	
-	def __repr__(self):
-		return f'<Fundi {self.id} {self.first_name} + {self.last_name}>'
-
-
-class Client(db.Model):
+class Client(db.Model, UserMixin):
 	"""
 	Client model definition"""
 	__tablename__ = 'clients'
 
 
 	id = db.Column(db.Integer, primary_key=True)
-	first_name = db.Column(db.String(50), nullable=False)
-	last_name = db.Column(db.String(50), nullable=False)
+	user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 	phone_number = db.Column(db.String(50), nullable=True)
-	phone_number = db.Column(db.String(50), nullable=True)
-	email = db.Column(db.String(120), nullable=False)
 	image_link = db.Column(db.String(120), nullable=False, default='default.jpg')
-	password = db.Column(db.String(200), nullable=False)
 	location = db.Column(db.String(50), nullable=True)
-	
 	orders = db.relationship("Order", backref = "clients", lazy=True, cascade="all, delete-orphan")
+	
+	@property
+	def user(self):
+		return User.query.get(self.user_id)
 
 	def __repr__(self):
-		return f'<Client {self.id} {self.first_name} + {self.last_name}>'
-
+# Use the user property to access the first_name and last_name attributes
+		return f'<Fundi {self.id} {self.user.first_name} + {self.user.last_name}>'
 
 class Order(db.Model):
 	"""Order class definition"""
@@ -70,3 +89,4 @@ class Order(db.Model):
 
 	client_id = db.Column(db.Integer, db.ForeignKey("clients.id"), nullable=False)
 	fundi_id = db.Column(db.Integer, db.ForeignKey("fundis.id"), nullable=False)
+	
