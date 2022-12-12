@@ -11,8 +11,8 @@ class Config(object):
 
     # Connect to the database
     DATABASE_NAME = 'maskani'
-    username = 'oyaro'
-    password = 'serverless'
+    username = 'postgres'
+    password = 'ikxi0000'
     url = 'localhost:5432'
     SQLALCHEMY_DATABASE_URI = "postgresql://{}:{}@{}/{}".format(
         username,
@@ -23,4 +23,11 @@ class Config(object):
 
     # CSRF token with wtforms
     #WTF_CSRF_ENABLED = True
+<<<<<<< HEAD
+<<<<<<< HEAD
+    #WTF_CSRF_SECRET_KEY = 'wtf secret key'
+=======
+    #WTF_CSRF_SECRET_KEY = 'wtf secret key'
+>>>>>>> main
+=======
     #WTF_CSRF_SECRET_KEY = 'wtf secret key'

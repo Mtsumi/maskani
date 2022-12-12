@@ -18,6 +18,7 @@ def index():
     return render_template("pages/index.html")
 
 @app.route("/dashboard")
+@login_required
 def dashboard():
     if current_user.is_authenticated:
         user = current_user
@@ -81,10 +82,9 @@ def login():
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Maskani Login', form=form)
 
-@app.route("/clients/myorders")
-@login_required
-def myorders():
-    return "<h1>My favourite Gigs on My order Page</h1>"
+@app.route("/clients/login")
+def client_login():
+    return "<h1>This is the login route</h1>"
 
 @app.route("/about")
 def about():
