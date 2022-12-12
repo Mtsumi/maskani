@@ -70,26 +70,17 @@ def login():
         return redirect(url_for('dashboard'))
     form = LoginForm()
     if form.validate_on_submit():
-        hashed_password = generate_password_hash(form.password.data, method='sha256')
-        new_user = Fundi(
-                first_name=form.first_name.data,
-                last_name=form.last_name.data,
-                email=form.email.data,
-                password=hashed_password,
-                profession=form.profession.data,
-                )
-        db.session.add(new_user)
-        db.session.commit()
-        #login_user(new_user, remember=True)
-        flash('Your account has been created! You are now able to log in', 'success')
-        return redirect(url_for('edit_fundi'))
-    flash('Something went wrong with validation')
-    return render_template('fundi_sign_up.html', title='Register As A Fundi', form=form)
         
-
-@app.route("/sign")
-def sign():
-    return render_template("signup.html")
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember.data)
+            
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('dashboard'))
+            
+        else:
+            flash('Login Unsuccessful. Please check email and password', 'danger')
+    return render_template('login.html', title='Maskani Login', form=form)
 
 @app.route("/clients/login")
 def client_login():
