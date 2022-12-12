@@ -10,5 +10,9 @@ app = Flask(__name__)
 app.config.from_object(Config)
 bootstrap = Bootstrap(app)
 
+<<<<<<< HEAD
+db = SQLAlchemy(app)
+app.app_context().push()
+=======
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)

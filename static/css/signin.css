@@ -1,12 +1,12 @@
 body {
     padding-top: 40px;
     padding-bottom: 40px;
-    background-color: #eee;
+    background-color: #fff;
   }
   
   .form-signin {
-    max-width: 330px;
-    padding: 15px;
+    max-width: 150px;
+    padding: 10px;
     margin: 0 auto;
   }
   .form-signin .form-signin-heading,
@@ -17,7 +17,7 @@ body {
     font-weight: normal;
   }
   .form-signin .form-control {
-    position: relative;
+    position:relative;
     height: auto;
     -webkit-box-sizing: border-box;
        -moz-box-sizing: border-box;
@@ -38,3 +38,4 @@ body {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
   }
+  
