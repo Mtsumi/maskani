@@ -10,6 +10,7 @@ from . import app, db
 from .models import *
 
 
+app.app_context().push()
 db.create_all()
 
 @app.route("/")
@@ -64,10 +65,12 @@ def sign_up():
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
+    print(current_user._get_current_object)
     if current_user.is_authenticated:
         return redirect(url_for('dashboard'))
     form = LoginForm()
     if form.validate_on_submit():
+        print(f'I am a {user["role"]} but i got validated through login')
         user = User.query.filter_by(email=form.email.data).first()
         if user and check_password_hash(user.password, form.password.data):
             if user.role == 'fundi':
