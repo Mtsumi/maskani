@@ -17,6 +17,7 @@ def index():
     return render_template("pages/index.html")
 
 @app.route("/dashboard")
+@login_required
 def dashboard():
     if current_user.is_authenticated:
         user = current_user
@@ -40,7 +41,7 @@ def sign_up():
                     role=form.role.data)
         db.session.add(user)
         db.session.commit()
-        print(f'I am a ' + {user.role})
+        print(f'I am a {user["role"]}')
         if user.role=='client': 
             new_client = Client(user_id=user.id)
             print('Creating a "client" object and logging the user in')
@@ -69,9 +70,14 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and check_password_hash(user.password, form.password.data):
-            login_user(user, remember=form.remember.data)
-            next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('dashboard'))
+            if user.role == 'fundi':
+                user = Fundi.query.get(user_id=user.id)
+                login_user(user, remember=form.remember.data)
+            else:
+                user = Client.query.get(user_id=user.id)
+                login_user(user, remember=form.remember.data)
+                next_page = request.args.get('next')
+                return redirect(next_page) if next_page else redirect(url_for('dashboard'))
             
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
