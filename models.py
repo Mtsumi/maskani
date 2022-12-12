@@ -55,6 +55,7 @@ class Client(db.Model, UserMixin):
 	Client model definition"""
 	__tablename__ = 'clients'
 
+
 	id = db.Column(db.Integer, primary_key=True)
 	user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 	phone_number = db.Column(db.String(50), nullable=True)
@@ -72,6 +73,7 @@ class Client(db.Model, UserMixin):
 
 class Order(db.Model):
 	"""Order class definition"""
+	"""Order class definition"""
 	__tablename__ = 'orders'
 
 	id = db.Column(db.Integer, primary_key=True)
@@ -82,6 +84,7 @@ class Order(db.Model):
 	service = db.Column(db.String, nullable=False)
 	completed = db.Column(db.Boolean, nullable=False, default=False)
 	date_created = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+	date_due = db.Column(db.DateTime, default=date_created + timedelta(hours=6), nullable=False)
 	date_due = db.Column(db.DateTime, default=date_created + timedelta(hours=6), nullable=False)
 
 	client_id = db.Column(db.Integer, db.ForeignKey("clients.id"), nullable=False)
