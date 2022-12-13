@@ -10,6 +10,7 @@ from . import app, db
 from .models import *
 
 
+app.app_context().push()
 db.create_all()
 
 @app.route("/")
@@ -32,35 +33,49 @@ def sign_up():
         db.session.commit()
         #print(f'I am a ' + {user.role})
         if user.role=='client': 
-            new_user = Client(user_id=user.id)
+            new_client = Client(user_id=user.id)
             print('Creating a "client" object and logging the user in')
+            db.session.add(new_client)
+            db.session.commit()
+            login_user(new_client, remember=True)
+            flash('Your account has been created! You can now post a job. You are now able to log in', 'success')
+            return redirect(url_for('login'))
         else:
-            new_user= Fundi(user_id=user.id)
-        db.session.add(new_user)
-        db.session.commit()
-        login_user(new_user, remember=True)
-        flash('Your account has been created! You are now able to log in', 'success')
-        return redirect(url_for('login'))
+            new_fundi = Fundi(user_id=user.id)
+            print('Creating a "fundi" object and logging the user in')
+            db.session.add(new_fundi)
+            db.session.commit()
+            login_user(new_fundi, remember=True)
+            flash('Your account has been created! You are now a Fundi at Maskani. You are now able to log in', 'success')
+            return redirect(url_for('login'))
+
     flash('Something went wrong with validation')
     return render_template('sign_up.html', title='Register to Maskani', form=form)
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
+    print(current_user._get_current_object)
     if current_user.is_authenticated:
         return redirect(url_for('dashboard'))
     form = LoginForm()
     if form.validate_on_submit():
+        
         user = User.query.filter_by(email=form.email.data).first()
         if user and check_password_hash(user.password, form.password.data):
             user_id = user.id
             if user.role == 'fundi':
                 
-                specific_user = Fundi.query.filter_by(user_id=user_id).first()
+                fundi = Fundi.query.filter_by(user_id=user_id).first()
+                print(fundi)
+                login_user(fundi, remember=form.remember.data)
+                next_page = request.args.get('next')
+                return redirect(next_page) if next_page else redirect(url_for('dashboard'))
+                
             else:
-                specific_user = Client.query.filter_by(user_id=user_id).first()
-            login_user(specific_user, remember=form.remember.data)
-            next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('dashboard'))
+                client = Client.query.filter_by(user_id=user_id).first()
+                login_user(client, remember=form.remember.data)
+                next_page = request.args.get('next')
+                return redirect(next_page) if next_page else redirect(url_for('dashboard'))
         flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Maskani Login', form=form)
 
@@ -75,7 +90,6 @@ def dashboard():
         else:
             print(current_user.user.last_name)
             print(current_user.user.role)
-            print(current_user.user.id)
             return redirect(url_for('myorders'))
         
     return("<h1>There is no User here!<h2>")
