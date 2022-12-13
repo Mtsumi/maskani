@@ -6,13 +6,13 @@ from flask_login import UserMixin
 @login_manager.user_loader
 def load_user(user_id):
     user = User.query.get(user_id)
-    if user.role == 'client':
-		
-        return Client.query.get(user_id)
-    elif user.role == 'fundi':
-        return Fundi.query.get(user_id)
-    else:
-        return None
+    if user is not None:
+        if user.role == 'client':
+            return Client.query.get(user_id)
+        elif user.role == 'fundi':
+            return Fundi.query.get(user_id)
+    # Return None if the user object is None
+    return None
 
 #Creating a class model of Database
 
@@ -24,8 +24,8 @@ class User(db.Model, UserMixin):
 	email = db.Column(db.String(80), unique=True, nullable=False)
 	password = db.Column(db.String(200), nullable=False)
 	role = db.Column(db.String(40), nullable=False)
-	fundis = db.relationship('Fundi', backref = "fundis", lazy=True)
-	clients = db.relationship('Client', backref = "clients", lazy=True)
+	fundis = db.relationship('Fundi', backref = "user", lazy=True)
+	clients = db.relationship('Client', backref = "user", lazy=True)
 
 
 
@@ -39,7 +39,7 @@ class Fundi(db.Model, UserMixin):
 	image_link = db.Column(db.String(120), nullable=False, default='default_fundi.jpg')
 	location = db.Column(db.String(50), nullable=True)
 
-	jobs = db.relationship("Order", backref = "fundis", lazy=True, cascade="all, delete-orphan")
+	jobs = db.relationship("Order", backref = "fundis", lazy=True)
 	
 # This property returns the User object associated with this Fundi object
 	@property
@@ -61,7 +61,7 @@ class Client(db.Model, UserMixin):
 	phone_number = db.Column(db.String(50), nullable=True)
 	image_link = db.Column(db.String(120), nullable=False, default='default.jpg')
 	location = db.Column(db.String(50), nullable=True)
-	orders = db.relationship("Order", backref = "clients", lazy=True, cascade="all, delete-orphan")
+	orders = db.relationship("Order", backref = "clients", lazy=True)
 	
 	@property
 	def user(self):

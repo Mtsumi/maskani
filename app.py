@@ -17,6 +17,7 @@ db.create_all()
 def index():
     return render_template("pages/index.html")
 
+<<<<<<< HEAD
 @app.route("/dashboard")
 @login_required
 def dashboard():
@@ -28,6 +29,8 @@ def dashboard():
             return redirect(url_for('myorders'))
     return("<h1>There is no User here!<h2>")
 
+=======
+>>>>>>> aly
 @app.route("/sign_up", methods=['GET', 'POST'])
 def sign_up():
     if current_user.is_authenticated:
@@ -42,7 +45,11 @@ def sign_up():
                     role=form.role.data)
         db.session.add(user)
         db.session.commit()
+<<<<<<< HEAD
         print(f'I am a {user["role"]}')
+=======
+        #print(f'I am a ' + {user.role})
+>>>>>>> aly
         if user.role=='client': 
             new_client = Client(user_id=user.id)
             print('Creating a "client" object and logging the user in')
@@ -73,6 +80,7 @@ def login():
         
         user = User.query.filter_by(email=form.email.data).first()
         if user and check_password_hash(user.password, form.password.data):
+<<<<<<< HEAD
             login_user(user, remember=form.remember.data)
             
             next_page = request.args.get('next')
@@ -85,6 +93,45 @@ def login():
 @app.route("/clients/login")
 def client_login():
     return "<h1>This is the login route</h1>"
+=======
+            user_id = user.id
+            if user.role == 'fundi':
+                
+                fundi = Fundi.query.filter_by(user_id=user_id).first()
+                print(fundi)
+                login_user(fundi, remember=form.remember.data)
+                next_page = request.args.get('next')
+                return redirect(next_page) if next_page else redirect(url_for('dashboard'))
+                
+            else:
+                client = Client.query.filter_by(user_id=user_id).first()
+                login_user(client, remember=form.remember.data)
+                next_page = request.args.get('next')
+                return redirect(next_page) if next_page else redirect(url_for('dashboard'))
+        flash('Login Unsuccessful. Please check email and password', 'danger')
+    return render_template('login.html', title='Maskani Login', form=form)
+
+@app.route("/dashboard")
+@login_required
+def dashboard():
+    if current_user.is_authenticated:
+        if current_user.user.role == 'fundi':
+            print(current_user.user.last_name)
+            print(current_user.user.role)
+            return redirect(url_for('mywork'))
+        else:
+            print(current_user.user.last_name)
+            print(current_user.user.role)
+            return redirect(url_for('myorders'))
+        
+    return("<h1>There is no User here!<h2>")
+
+
+@app.route("/clients/myorders")
+@login_required
+def myorders():
+    return "<h1>My favourite Gigs on My order Page</h1>"
+>>>>>>> aly
 
 @app.route("/about")
 def about():
