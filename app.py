@@ -80,20 +80,6 @@ def login():
         
         user = User.query.filter_by(email=form.email.data).first()
         if user and check_password_hash(user.password, form.password.data):
-<<<<<<< HEAD
-            login_user(user, remember=form.remember.data)
-            
-            next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('dashboard'))
-            
-        else:
-            flash('Login Unsuccessful. Please check email and password', 'danger')
-    return render_template('login.html', title='Maskani Login', form=form)
-
-@app.route("/clients/login")
-def client_login():
-    return "<h1>This is the login route</h1>"
-=======
             user_id = user.id
             if user.role == 'fundi':
                 
@@ -131,7 +117,6 @@ def dashboard():
 @login_required
 def myorders():
     return "<h1>My favourite Gigs on My order Page</h1>"
->>>>>>> aly
 
 @app.route("/about")
 def about():
