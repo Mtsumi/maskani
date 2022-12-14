@@ -1,0 +1,15 @@
+{% extends "pages/base.html" %}
+{% block content %}
+	<form>
+		<!-- Input fields for the order details -->
+		<label for="title">Title:</label><br>
+		<input type="text" id="title" name="title"><br>
+		<label for="description">Description:</label><br>
+		<input type="text" id="description" name="description"><br>
+		<label for="location">Location:</label><br>
+		<input type="text" id="location" name="location"><br>
+		
+		<!-- Submit button -->
+		<input type="submit" value="Submit">
+	</form>
+{% endblock %}

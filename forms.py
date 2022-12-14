@@ -32,3 +32,15 @@ class RegisterForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user:
             raise ValidationError('That email is taken. Please choose a different one.')
+
+class OrderForm(FlaskForm):
+    title = StringField('Title', validators=[InputRequired(), Length(min=4, max=15)])
+    description = StringField('Description', validators=[InputRequired(), Length(min=4, max=500)])
+    choices = [('nyali', 'Nyali'), ('kongowea', 'Kongowea'), ('changamwe', 'Changamwe'), ('kisauni', 'Kisauni'), ('mvita'. 'Mvita'), ('tudor', 'Tudor')]
+    location = SelectField('Location', validators=[DataRequired()], choices=choices)
+    image_link = 
+    services = [('plumbing', 'Plumbing'), ('electrical', 'Electrical'), ('carpentry', 'Carpentry'), ('painting', 'Painting'), ('tailoring', 'Tailoring'), ('barber', 'Barber'), ('casual', 'Just need some hands')]
+    service = SelectField('Service Needed', validators=[DataRequired()], choices=services)
+    prices = [('100-300', 'Ksh 100 - 300'), ('300-500', 'Ksh 300 - 500'), ('500-800', 'Ksh 500 - 800'), ('1000', 'Ksh 1000+') ]
+    price_range = SelectField('Price Range', validators=[DataRequired()], choices=prices)
+    submit = SubmitField('Submit')
