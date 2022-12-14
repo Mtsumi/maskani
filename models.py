@@ -5,14 +5,15 @@ from flask_login import UserMixin
 
 @login_manager.user_loader
 def load_user(user_id):
-    user = User.query.get(user_id)
+    user = User.query.get(id=user_id)
     if user is not None:
         if user.role == 'client':
-            return Client.query.get(user_id)
+            return Client(user_id=user_id)
         elif user.role == 'fundi':
-            return Fundi.query.get(user_id)
+            return Fundi(user_id=user_id)
     # Return None if the user object is None
     return None
+
 
 #Creating a class model of Database
 
@@ -77,6 +78,7 @@ class Order(db.Model):
 	__tablename__ = 'orders'
 
 	id = db.Column(db.Integer, primary_key=True)
+	title = db.Column(db.String(50), nullable=False)
 	description = db.Column(db.String(500), nullable=False)
 	price_range = db.Column(db.String(50), nullable=False)
 	image_link = db.Column(db.String(50), nullable=True)

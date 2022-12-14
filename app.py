@@ -2,7 +2,7 @@ from flask import render_template, request, flash, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, current_user, login_required
 #, logout_user, 
-from .forms import RegisterForm, LoginForm
+from .forms import RegisterForm, LoginForm, OrderForm
 from . import app, db
 
 
@@ -31,23 +31,18 @@ def sign_up():
                     role=form.role.data)
         db.session.add(user)
         db.session.commit()
-        #print(f'I am a ' + {user.role})
         if user.role=='client': 
-            new_client = Client(user_id=user.id)
-            print('Creating a "client" object and logging the user in')
-            db.session.add(new_client)
-            db.session.commit()
-            login_user(new_client, remember=True)
-            flash('Your account has been created! You can now post a job. You are now able to log in', 'success')
-            return redirect(url_for('login'))
-        else:
-            new_fundi = Fundi(user_id=user.id)
+            new_user = Client(user_id=user.id)
             print('Creating a "fundi" object and logging the user in')
-            db.session.add(new_fundi)
-            db.session.commit()
-            login_user(new_fundi, remember=True)
-            flash('Your account has been created! You are now a Fundi at Maskani. You are now able to log in', 'success')
-            return redirect(url_for('login'))
+        else:
+            new_user = Fundi(user_id=user.id)
+            print('Creating a "fundi" object and logging the user in')
+        db.session.add(new_user)
+        db.session.commit()
+        login_user(new_user, remember=True)
+        flash('Your account has been created! You can now post a job. You are now able to log in', 'success')
+        return redirect(url_for('login'))
+    
 
     flash('Something went wrong with validation')
     return render_template('sign_up.html', title='Register to Maskani', form=form)
@@ -64,18 +59,13 @@ def login():
         if user and check_password_hash(user.password, form.password.data):
             user_id = user.id
             if user.role == 'fundi':
-                
-                fundi = Fundi.query.filter_by(user_id=user_id).first()
-                print(fundi)
-                login_user(fundi, remember=form.remember.data)
-                next_page = request.args.get('next')
-                return redirect(next_page) if next_page else redirect(url_for('dashboard'))
-                
+                specific_obj = Fundi.query.filter_by(user_id=user_id).first()
             else:
-                client = Client.query.filter_by(user_id=user_id).first()
-                login_user(client, remember=form.remember.data)
-                next_page = request.args.get('next')
-                return redirect(next_page) if next_page else redirect(url_for('dashboard'))
+                specific_obj = Client.query.filter_by(user_id=user_id).first()
+
+            login_user(specific_obj, remember=form.remember.data)
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('dashboard'))
         flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Maskani Login', form=form)
 
@@ -94,6 +84,13 @@ def dashboard():
         
     return("<h1>There is no User here!<h2>")
 
+@app.route("/clients/post_a_job", methods=['GET', 'POST'])
+#@login_required
+def new_order():
+    form = OrderForm()
+    
+    return render_template("pages/new_order.html") 
+
 
 @app.route("/clients/myorders")
 @login_required
@@ -108,6 +105,7 @@ def about():
 @login_required
 def edit_client():
     return "<h1> This is the where client comes after login <h1>"
+
 
 
 @app.route("/fundis/edit")
