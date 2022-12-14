@@ -88,7 +88,26 @@ def dashboard():
 #@login_required
 def new_order():
     form = OrderForm()
-    
+    print(current_user.id)
+    if form.validate():
+        try:
+            new_order = Order(title=form.title.data,
+                    description=form.description.data,
+                    location=form.location.data,
+                    image_link=form.location.data,
+                    service=form.service.data,
+                    price_range=form.price_range.data,
+                    client_id = current_user.id
+                    )
+            db.session.add(new_order)
+            db.session.commit()
+            flash("New order " + request.form["title"] + " was successfully listed!")
+        except Exception:
+            db.session.rollback()
+            flash("Order was not successfully listed.")
+        finally:
+            db.session.close()
+
     return render_template("pages/new_order.html") 
 
 
