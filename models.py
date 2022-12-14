@@ -5,7 +5,7 @@ from flask_login import UserMixin
 
 @login_manager.user_loader
 def load_user(user_id):
-    user = User.query.get(id=user_id)
+    user = User.query.get(user_id)
     if user is not None:
         if user.role == 'client':
             return Client(user_id=user_id)
@@ -25,8 +25,13 @@ class User(db.Model, UserMixin):
 	email = db.Column(db.String(80), unique=True, nullable=False)
 	password = db.Column(db.String(200), nullable=False)
 	role = db.Column(db.String(40), nullable=False)
+	image_link = db.Column(db.String(120), nullable=False, default='/static/img/default.jpg')
+	phone_number = db.Column(db.String(50), nullable=True)
+	location = db.Column(db.String(50), nullable=True)
+
 	fundis = db.relationship('Fundi', backref = "user", lazy=True)
 	clients = db.relationship('Client', backref = "user", lazy=True)
+
 
 
 
@@ -34,12 +39,9 @@ class Fundi(db.Model, UserMixin):
 	__tablename__ = 'fundis'
 
 	id = db.Column(db.Integer, primary_key=True)
-	user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 	skills = db.Column(db.String(50), nullable=True)
-	phone_number = db.Column(db.String(50), nullable=True)
-	image_link = db.Column(db.String(120), nullable=False, default='default_fundi.jpg')
-	location = db.Column(db.String(50), nullable=True)
 
+	user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 	jobs = db.relationship("Order", backref = "fundis", lazy=True)
 	
 # This property returns the User object associated with this Fundi object
@@ -56,12 +58,9 @@ class Client(db.Model, UserMixin):
 	Client model definition"""
 	__tablename__ = 'clients'
 
-
 	id = db.Column(db.Integer, primary_key=True)
+	
 	user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-	phone_number = db.Column(db.String(50), nullable=True)
-	image_link = db.Column(db.String(120), nullable=False, default='default.jpg')
-	location = db.Column(db.String(50), nullable=True)
 	orders = db.relationship("Order", backref = "clients", lazy=True)
 	
 	@property
@@ -74,19 +73,18 @@ class Client(db.Model, UserMixin):
 
 class Order(db.Model):
 	"""Order class definition"""
-	"""Order class definition"""
 	__tablename__ = 'orders'
 
 	id = db.Column(db.Integer, primary_key=True)
 	title = db.Column(db.String(50), nullable=False)
 	description = db.Column(db.String(500), nullable=False)
+	location = db.Column(db.String(50), nullable=False)
 	price_range = db.Column(db.String(50), nullable=False)
 	image_link = db.Column(db.String(50), nullable=True)
 	status = db.Column(db.Boolean, nullable=False, default=False)
 	service = db.Column(db.String, nullable=False)
 	completed = db.Column(db.Boolean, nullable=False, default=False)
 	date_created = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-	date_due = db.Column(db.DateTime, default=date_created + timedelta(hours=6), nullable=False)
 	date_due = db.Column(db.DateTime, default=date_created + timedelta(hours=6), nullable=False)
 
 	client_id = db.Column(db.Integer, db.ForeignKey("clients.id"), nullable=False)

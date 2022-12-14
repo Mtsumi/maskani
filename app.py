@@ -84,9 +84,10 @@ def dashboard():
         
     return("<h1>There is no User here!<h2>")
 
-@app.route("/clients/post_a_job", methods=['GET', 'POST'])
+@app.route("/clients/<int:client_id>/post_a_job", methods=['GET', 'POST'])
 #@login_required
-def new_order():
+def new_order(client_id):
+    client_id = current_user.id
     form = OrderForm()
     print(current_user.id)
     if form.validate():
@@ -94,10 +95,11 @@ def new_order():
             new_order = Order(title=form.title.data,
                     description=form.description.data,
                     location=form.location.data,
-                    image_link=form.location.data,
                     service=form.service.data,
+                    image_link=form.image_link.data,
                     price_range=form.price_range.data,
-                    client_id = current_user.id
+                    date_due=form.date_due.data,
+                    client_id = client_id
                     )
             db.session.add(new_order)
             db.session.commit()

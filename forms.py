@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm 
-from wtforms import BooleanField, PasswordField, SelectField, SubmitField,  StringField
-from wtforms.validators import Email, EqualTo, DataRequired, InputRequired, Length, ValidationError
+from wtforms import BooleanField, PasswordField, SelectField, SubmitField,  StringField, DateTimeField
+from wtforms.validators import Email, EqualTo, DataRequired, InputRequired, Length, ValidationError, Optional, URL
 from .models import *
 #from werkzeug.security import generate_password_hash, check_password_hash
 #from flask_login import UserMixin, login_user, login_required, logout_user, current_user
@@ -36,11 +36,12 @@ class RegisterForm(FlaskForm):
 class OrderForm(FlaskForm):
     title = StringField('Title', validators=[InputRequired(), Length(min=4, max=15)])
     description = StringField('Description', validators=[InputRequired(), Length(min=4, max=500)])
-    choices = [('nyali', 'Nyali'), ('kongowea', 'Kongowea'), ('changamwe', 'Changamwe'), ('kisauni', 'Kisauni'), ('mvita'. 'Mvita'), ('tudor', 'Tudor')]
+    choices = [('nyali', 'Nyali'), ('kongowea', 'Kongowea'), ('changamwe', 'Changamwe'), ('kisauni', 'Kisauni'), ('mvita', 'Mvita'), ('tudor', 'Tudor')]
     location = SelectField('Location', validators=[DataRequired()], choices=choices)
-    image_link = 
     services = [('plumbing', 'Plumbing'), ('electrical', 'Electrical'), ('carpentry', 'Carpentry'), ('painting', 'Painting'), ('tailoring', 'Tailoring'), ('barber', 'Barber'), ('casual', 'Just need some hands')]
     service = SelectField('Service Needed', validators=[DataRequired()], choices=services)
+    image_link =  StringField('Image', default='', validators=[Optional(), URL()])
     prices = [('100-300', 'Ksh 100 - 300'), ('300-500', 'Ksh 300 - 500'), ('500-800', 'Ksh 500 - 800'), ('1000', 'Ksh 1000+') ]
     price_range = SelectField('Price Range', validators=[DataRequired()], choices=prices)
+    date_due = DateTimeField('Deadline', validators=[Optional()], format='%Y-%m-%d %H:%M')
     submit = SubmitField('Submit')
