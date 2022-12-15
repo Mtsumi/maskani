@@ -38,6 +38,10 @@ class OrderForm(FlaskForm):
     description = StringField('Description', validators=[InputRequired(), Length(min=4, max=500)])
     choices = [('nyali', 'Nyali'), ('kongowea', 'Kongowea'), ('changamwe', 'Changamwe'), ('kisauni', 'Kisauni'), ('mvita', 'Mvita'), ('tudor', 'Tudor')]
     location = SelectField('Location', validators=[DataRequired()], choices=choices)
+<<<<<<< Updated upstream
+=======
+    #image_link = 
+>>>>>>> Stashed changes
     services = [('plumbing', 'Plumbing'), ('electrical', 'Electrical'), ('carpentry', 'Carpentry'), ('painting', 'Painting'), ('tailoring', 'Tailoring'), ('barber', 'Barber'), ('casual', 'Just need some hands')]
     service = SelectField('Service Needed', validators=[DataRequired()], choices=services)
     image_link =  StringField('Image', default='', validators=[Optional(), URL()])
