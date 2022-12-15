@@ -73,24 +73,32 @@ def login():
 @login_required
 def dashboard():
     if current_user.is_authenticated:
-        if current_user.user.role == 'fundi':
-            print(current_user.user.last_name)
-            print(current_user.user.role)
+        user= User.query.get(current_user.user_id)
+        if user.role == 'fundi':
+            print(user.last_name)
+            print(user.role)
             return redirect(url_for('mywork'))
         else:
-            print(current_user.user.last_name)
-            print(current_user.user.role)
+            print(user.last_name)
+            print(user.role)
             return redirect(url_for('myorders'))
         
     return("<h1>There is no User here!<h2>")
 
 @app.route("/clients/<int:client_id>/post_a_job", methods=['GET', 'POST'])
-#@login_required
+@login_required
 def new_order(client_id):
-    client_id = current_user.id
+    client_id = current_user.get_id()
+    user_id = current_user.user_id
+    
+    print(user_id)
+    user = User.query.get(user_id)
+    name = user.first_name
+
     form = OrderForm()
-    print(current_user.id)
+    print(client_id)
     if form.validate():
+        print("form validates")
         try:
             new_order = Order(title=form.title.data,
                     description=form.description.data,
@@ -98,9 +106,10 @@ def new_order(client_id):
                     service=form.service.data,
                     image_link=form.image_link.data,
                     price_range=form.price_range.data,
-                    date_due=form.date_due.data,
+                    #date_due=form.date_due.data,
                     client_id = client_id
                     )
+            print(new_order)
             db.session.add(new_order)
             db.session.commit()
             flash("New order " + request.form["title"] + " was successfully listed!")
@@ -110,7 +119,7 @@ def new_order(client_id):
         finally:
             db.session.close()
 
-    return render_template("pages/new_order.html") 
+    return render_template("new_order.html", title='Post a job', form=form, name=name ) 
 
 
 @app.route("/clients/myorders")
