@@ -5,6 +5,7 @@ from flask_login import UserMixin
 
 @login_manager.user_loader
 def load_user(user_id):
+
     user = User.query.get(user_id)
     if user is not None:
         if user.role == 'client':
@@ -90,3 +91,11 @@ class Order(db.Model):
 	client_id = db.Column(db.Integer, db.ForeignKey("clients.id"), nullable=False)
 	fundi_id = db.Column(db.Integer, db.ForeignKey("fundis.id"), nullable=False)
 	
+	
+	@property
+	def user(self):
+		
+		return User.query.get(self.iden)
+
+	def __repr__(self):
+		return f'<Order {self.id} {self.user.first_name} + {self.user.last_name}>'
