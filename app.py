@@ -39,7 +39,7 @@ def sign_up():
             print('Creating a "fundi" object and logging the user in')
         db.session.add(new_user)
         db.session.commit()
-        login_user(new_user, remember=True)
+        #login_user(new_user, remember=True)
         flash('Your account has been created! You can now post a job. You are now able to log in', 'success')
         return redirect(url_for('login'))
     
@@ -73,13 +73,14 @@ def login():
 @login_required
 def dashboard():
     if current_user.is_authenticated:
-        if current_user.user.role == 'fundi':
-            print(current_user.user.last_name)
-            print(current_user.user.role)
+        user= User.query.get(current_user.user_id)
+        if user.role == 'fundi':
+            print(user.last_name)
+            print(user.role)
             return redirect(url_for('mywork'))
         else:
-            print(current_user.user.last_name)
-            print(current_user.user.role)
+            print(user.last_name)
+            print(user.role)
             return redirect(url_for('myorders'))
         
     return("<h1>There is no User here!<h2>")
