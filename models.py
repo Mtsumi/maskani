@@ -5,15 +5,8 @@ from flask_login import UserMixin
 
 @login_manager.user_loader
 def load_user(user_id):
+    return User.query.get(int(user_id))
 
-    user = User.query.get(user_id)
-    if user is not None:
-        if user.role == 'client':
-            return Client(user_id=user_id)
-        elif user.role == 'fundi':
-            return Fundi(user_id=user_id)
-    # Return None if the user object is None
-    return None
 
 
 #Creating a class model of Database
@@ -30,9 +23,11 @@ class User(db.Model, UserMixin):
 	phone_number = db.Column(db.String(50), nullable=True)
 	location = db.Column(db.String(50), nullable=True)
 
-	fundis = db.relationship('Fundi', backref = "user", lazy=True)
-	clients = db.relationship('Client', backref = "user", lazy=True)
+	fundis = db.relationship('Fundi', backref = "users", lazy=True)
+	clients = db.relationship('Client', backref = "users", lazy=True)
 
+	def __repr__(self):
+		return f'<User {self.id} {self.first_name} {self.last_name} is a {self.role}>'
 
 
 
@@ -43,7 +38,7 @@ class Fundi(db.Model, UserMixin):
 	skills = db.Column(db.String(50), nullable=True)
 
 	user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-	jobs = db.relationship("Order", backref = "fundis", lazy=True)
+	jobs = db.relationship("Order", backref = "fundi", lazy=True)
 	
 # This property returns the User object associated with this Fundi object
 	@property
@@ -62,7 +57,7 @@ class Client(db.Model, UserMixin):
 	id = db.Column(db.Integer, primary_key=True)
 	
 	user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-	orders = db.relationship("Order", backref = "clients", lazy=True)
+	orders = db.relationship("Order", backref = "client", lazy=True)
 	
 	@property
 	def user(self):
@@ -70,7 +65,7 @@ class Client(db.Model, UserMixin):
 
 	def __repr__(self):
 # Use the user property to access the first_name and last_name attributes
-		return f'<Fundi {self.id} {self.user.first_name} + {self.user.last_name}>'
+		return f'<Client {self.id} {self.user.first_name} + {self.user.last_name}>'
 
 class Order(db.Model):
 	"""Order class definition"""
@@ -85,17 +80,23 @@ class Order(db.Model):
 	status = db.Column(db.Boolean, nullable=False, default=False)
 	service = db.Column(db.String, nullable=False)
 	completed = db.Column(db.Boolean, nullable=False, default=False)
-	date_created = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-	date_due = db.Column(db.DateTime, default=date_created + timedelta(hours=6), nullable=False)
-
+	date_created = db.Column(db.DateTime, default=datetime.now(), nullable=False)
+	#duration = db.Column(db.String, nullable=False)
+	date_due = db.Column(db.DateTime, nullable=False, default=datetime.now() + timedelta(hours=12))
+	
 	client_id = db.Column(db.Integer, db.ForeignKey("clients.id"), nullable=False)
 	fundi_id = db.Column(db.Integer, db.ForeignKey("fundis.id"), nullable=False)
+
+	# def set_date_due(self):
+	# 	dur = int(self.duration)
+	# 	self.date_due = self.date_created + timedelta(hours=dur)
 	
 	
 	@property
 	def user(self):
-		
-		return User.query.get(self.iden)
+		client = Client.query.get(self.client_id)
+		user = User.query.get(client.user_id)
+		return user
 
 	def __repr__(self):
-		return f'<Order {self.id} {self.user.first_name} + {self.user.last_name}>'
+		return f'<Order {self.id} {self.title} created by {self.user.first_name} + {self.user.last_name} at {self.date_created}>'
