@@ -1,8 +1,11 @@
+import os
+import secrets
+from PIL import Image
 from flask import render_template, request, flash, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, current_user, login_required
-#, logout_user, 
-from .forms import RegisterForm, LoginForm, OrderForm
+
+from .forms import RegisterForm, LoginForm, OrderForm, UpdateAccountForm
 from . import app, db
 
 
@@ -26,6 +29,7 @@ def sign_up():
         hashed_password = generate_password_hash(form.password.data, method='sha256')
         user = User(first_name=form.first_name.data,
                     last_name=form.last_name.data,
+                    username=form.username.data,
                     email=form.email.data,
                     password=hashed_password,
                     role=form.role.data)
@@ -92,9 +96,10 @@ def new_order(client_id):
     user_id = current_user.user_id
     
     print(user_id)
+
     user = User.query.get(user_id)
     name = user.first_name
-
+#creating an instance of OrderForm class
     form = OrderForm()
     print(client_id)
     if form.validate():
@@ -120,6 +125,55 @@ def new_order(client_id):
             db.session.close()
 
     return render_template("new_order.html", title='Post a job', form=form, name=name ) 
+
+@app.route("/client/account", methods=['GET', 'POST'])
+@login_required
+def account(client_id):
+    client_id = current_user.get_id()
+    user_id = current_user.user_id
+
+    print(user_id)
+
+    user = User.query.get(user_id)
+    name = user.username
+    form = UpdateAccountForm()
+    if form.validate_on_submit():
+        # Get the currently logged-in user object
+        user = current_user._get_current_object()
+
+        # Update the user's data with the form data
+        user.username = form.username.data
+        user.email = form.email.data
+        if form.picture.data:
+            # Save the new profile picture and update the user's image_link field
+            picture_file = save_picture(form.picture.data)
+            user.image_link = picture_file
+
+        # Commit the changes to the database
+        db.session.commit()
+        flash('Your account has been updated!', 'success')
+        return redirect(url_for('account'))
+    elif request.method == 'GET':
+        # Prefill the form with the current data of the user
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+    image_link = url_for('static', filename='img/' + current_user.image_link)
+    return render_template('account.html', title='Account',
+                           image_link=image_link, form=form)
+
+
+def save_picture(form_picture):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_picture.filename)
+    picture_fn = random_hex + f_ext
+    picture_path = os.path.join(app.root_path, 'static/img', picture_fn)
+
+    output_size = (125, 125)
+    i = Image.open(form_picture)
+    i.thumbnail(output_size)
+    i.save(picture_path)
+
+    return picture_fn
 
 
 @app.route("/clients/myorders")
