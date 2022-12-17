@@ -51,18 +51,14 @@ def sign_up():
         else:
             new_user = Fundi(user_id=user.id)
             print('Creating a "fundi" object and logging the user in')
-            db.session.add(new_user)
-            db.session.commit()
-                ##login_user(new_user, remember=True)
-            flash('Your account has been created! You can now post a job. You are now able to log in', 'success')
-            return redirect(url_for('login'))
-         #   except:
-                #db.session.rollback()
-                #flash("Fundi or client not Created!")
-         #   finally:
-                #db.session.close()
-            
-    #flash('Something went wrong with validation')
+        db.session.add(new_user)
+        db.session.commit()
+        login_user(new_user, remember=True)
+        flash('Your account has been created! You can now post a job. You are now able to log in', 'success')
+        return redirect(url_for('login'))
+    
+
+    flash('Something went wrong with validation')
     return render_template('sign_up.html', title='Register to Maskani', form=form)
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -134,6 +130,8 @@ def new_order():
 
         return render_template("new_order.html", title='Post a job', form=form, name=name )
 
+
+    return ("<h1>User isn't logged in<h1>")
 
 @app.route("/clients/myorders")
 @login_required
