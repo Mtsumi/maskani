@@ -26,6 +26,7 @@ def sign_up():
         return redirect(url_for('dashboard'))
     form = RegisterForm()
     if form.validate_on_submit():
+        #try :
         hashed_password = generate_password_hash(form.password.data, method='sha256')
         user = User(first_name=form.first_name.data,
                     last_name=form.last_name.data,
@@ -35,20 +36,33 @@ def sign_up():
                     role=form.role.data)
         db.session.add(user)
         db.session.commit()
+        #except:
+        #db.session.rollback()
+        #flash("User not Created!")
+        #finally:
+        #db.session.close()
+        #  try:
         if user.role=='client': 
             new_user = Client(user_id=user.id)
             print('Creating a "fundi" object and logging the user in')
+            db.session.add(new_user)
+            db.session.commit()
+            return redirect(url_for('login'))
         else:
             new_user = Fundi(user_id=user.id)
             print('Creating a "fundi" object and logging the user in')
-        db.session.add(new_user)
-        db.session.commit()
-        #login_user(new_user, remember=True)
-        flash('Your account has been created! You can now post a job. You are now able to log in', 'success')
-        return redirect(url_for('login'))
-    
-
-    flash('Something went wrong with validation')
+            db.session.add(new_user)
+            db.session.commit()
+                ##login_user(new_user, remember=True)
+            flash('Your account has been created! You can now post a job. You are now able to log in', 'success')
+            return redirect(url_for('login'))
+         #   except:
+                #db.session.rollback()
+                #flash("Fundi or client not Created!")
+         #   finally:
+                #db.session.close()
+            
+    #flash('Something went wrong with validation')
     return render_template('sign_up.html', title='Register to Maskani', form=form)
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -61,13 +75,7 @@ def login():
         
         user = User.query.filter_by(email=form.email.data).first()
         if user and check_password_hash(user.password, form.password.data):
-            user_id = user.id
-            if user.role == 'fundi':
-                specific_obj = Fundi.query.filter_by(user_id=user_id).first()
-            else:
-                specific_obj = Client.query.filter_by(user_id=user_id).first()
-
-            login_user(specific_obj, remember=form.remember.data)
+            login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('dashboard'))
         flash('Login Unsuccessful. Please check email and password', 'danger')
@@ -77,103 +85,54 @@ def login():
 @login_required
 def dashboard():
     if current_user.is_authenticated:
-        user= User.query.get(current_user.user_id)
-        if user.role == 'fundi':
-            print(user.last_name)
-            print(user.role)
+        if current_user.role == 'fundi':
+            print(current_user.last_name)
+            print(current_user.role)
             return redirect(url_for('mywork'))
         else:
-            print(user.last_name)
-            print(user.role)
+            print(current_user.last_name)
+            print(current_user.role)
             return redirect(url_for('myorders'))
         
     return("<h1>There is no User here!<h2>")
 
-@app.route("/clients/<int:client_id>/post_a_job", methods=['GET', 'POST'])
+@app.route("/clients/post_a_job", methods=['GET', 'POST'])
 @login_required
-def new_order(client_id):
-    client_id = current_user.get_id()
-    user_id = current_user.user_id
-    
-    print(user_id)
-
-    user = User.query.get(user_id)
-    name = user.first_name
-#creating an instance of OrderForm class
-    form = OrderForm()
-    print(client_id)
-    if form.validate():
-        print("form validates")
-        try:
+def new_order():
+    if current_user.is_authenticated:
+        user_id = current_user.id
+        print(user_id)
+        client = Client.query.filter_by(user_id=user_id).first()
+        print(client)   
+        print(f"client ID is {client.id}")
+        name = current_user.first_name
+        print(f"Client name is {name}")
+        form = OrderForm()
+        if form.validate():
+            print("form validates")
+            #try:
             new_order = Order(title=form.title.data,
-                    description=form.description.data,
-                    location=form.location.data,
-                    service=form.service.data,
-                    image_link=form.image_link.data,
-                    price_range=form.price_range.data,
-                    #date_due=form.date_due.data,
-                    client_id = client_id
-                    )
+                        description=form.description.data,
+                        location=form.location.data,
+                        service=form.service.data,
+                        image_link=form.image_link.data,
+                        price_range=form.price_range.data,
+                        #duration=form.duration.data,
+                        client_id = client.id
+                        )
+            #new_order.set_date_due()
             print(new_order)
             db.session.add(new_order)
             db.session.commit()
             flash("New order " + request.form["title"] + " was successfully listed!")
-        except Exception:
-            db.session.rollback()
-            flash("Order was not successfully listed.")
-        finally:
-            db.session.close()
+            #except Exception:
+                #db.session.rollback()
+            #    flash("Order was not successfully listed.")
+            #finally:
+                #db.session.close()
+        print("<h1>Form Validation failed<h1>")
 
-    return render_template("new_order.html", title='Post a job', form=form, name=name ) 
-
-@app.route("/client/account", methods=['GET', 'POST'])
-@login_required
-def account(user_id):
-    #client_id = current_user.get_id()
-    user_id = current_user.user_id
-
-    print(user_id)
-
-    user = User.query.get(user_id)
-    #name = user.username
-    form = UpdateAccountForm()
-    if form.validate_on_submit():
-        # Get the currently logged-in user object
-        user = current_user._get_current_object()
-
-        # Update the user's data with the form data
-        user.username = form.username.data
-        user.email = form.email.data
-        if form.picture.data:
-            # Save the new profile picture and update the user's image_link field
-            picture_file = save_picture(form.picture.data)
-            user.image_link = picture_file
-
-        # Commit the changes to the database
-        db.session.commit()
-        flash('Your account has been updated!', 'success')
-        return redirect(url_for('account'))
-    elif request.method == 'GET':
-        # Prefill the form with the current data of the user
-        form.username.data = current_user.username
-        form.email.data = current_user.email
-    image_link = url_for('static', filename='img/' + current_user.image_link)
-    return render_template('account.html', title='Account',
-                           image_link=image_link, form=form)
-
-
-def save_picture(form_picture):
-    random_hex = secrets.token_hex(8)
-    _, f_ext = os.path.splitext(form_picture.filename)
-    picture_fn = random_hex + f_ext
-    picture_path = os.path.join(app.root_path, 'static/img', picture_fn)
-
-    output_size = (125, 125)
-    i = Image.open(form_picture)
-    i.thumbnail(output_size)
-    i.save(picture_path)
-
-    return picture_fn
+        return render_template("new_order.html", title='Post a job', form=form, name=name )
 
 
 @app.route("/clients/myorders")

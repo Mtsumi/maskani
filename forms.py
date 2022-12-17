@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm 
 from flask_wtf.file import FileField,FileAllowed
 from flask_login import current_user
-from wtforms import BooleanField, PasswordField, SelectField, SubmitField,  StringField, DateTimeField
+from wtforms import BooleanField, PasswordField, SelectField, SubmitField,  StringField
 from wtforms.validators import Email, EqualTo, DataRequired, InputRequired, Length, ValidationError, Optional, URL
 from .models import *
 #from werkzeug.security import generate_password_hash, check_password_hash
@@ -37,16 +37,17 @@ class RegisterForm(FlaskForm):
             raise ValidationError('That email is taken. Please choose a different one.')
 
 class OrderForm(FlaskForm):
+    
     title = StringField('Title', validators=[InputRequired(), Length(min=4, max=15)])
     description = StringField('Description', validators=[InputRequired(), Length(min=4, max=500)])
-    choices = [('nyali', 'Nyali'), ('kongowea', 'Kongowea'), ('changamwe', 'Changamwe'), ('kisauni', 'Kisauni'), ('mvita', 'Mvita'), ('tudor', 'Tudor')]
-    location = SelectField('Location', validators=[DataRequired()], choices=choices)
+    locations = [('nyali', 'Nyali'), ('kongowea', 'Kongowea'), ('changamwe', 'Changamwe'), ('kisauni', 'Kisauni'), ('mvita', 'Mvita'), ('tudor', 'Tudor')]
+    location = SelectField('Location', validators=[DataRequired()], choices=locations)
     services = [('plumbing', 'Plumbing'), ('electrical', 'Electrical'), ('carpentry', 'Carpentry'), ('painting', 'Painting'), ('tailoring', 'Tailoring'), ('barber', 'Barber'), ('casual', 'Just need some hands')]
     service = SelectField('Service Needed', validators=[DataRequired()], choices=services)
     image_link =  StringField('Image', default='', validators=[Optional(), URL()])
+    duration = SelectField('Due in', validators=[DataRequired()], choices=[('1', '1 hr'), ('2', '2 hrs'), ('4', '4 hrs'), ('6', '6 hrs'), ('8', '8 hrs'), ('12', '12 hrs')])
     prices = [('100-300', 'Ksh 100 - 300'), ('300-500', 'Ksh 300 - 500'), ('500-800', 'Ksh 500 - 800'), ('1000', 'Ksh 1000+') ]
     price_range = SelectField('Price Range', validators=[DataRequired()], choices=prices)
-    date_due = DateTimeField('Deadline', validators=[Optional()], format='%Y-%m-%d %H:%M')
     submit = SubmitField('Submit')
 
 class UpdateAccountForm(FlaskForm):
