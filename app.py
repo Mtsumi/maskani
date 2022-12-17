@@ -128,14 +128,14 @@ def new_order(client_id):
 
 @app.route("/client/account", methods=['GET', 'POST'])
 @login_required
-def account(client_id):
-    client_id = current_user.get_id()
+def account(user_id):
+    #client_id = current_user.get_id()
     user_id = current_user.user_id
 
     print(user_id)
 
     user = User.query.get(user_id)
-    name = user.username
+    #name = user.username
     form = UpdateAccountForm()
     if form.validate_on_submit():
         # Get the currently logged-in user object
