@@ -113,8 +113,8 @@ def new_order():
                         service=form.service.data,
                         image_link=form.image_link.data,
                         price_range=form.price_range.data,
-                        #duration=form.duration.data,
                         client_id = client.id
+                        #duration=form.duration.data,
                         )
             #new_order.set_date_due()
             print(new_order)
