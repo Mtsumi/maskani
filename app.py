@@ -1,8 +1,11 @@
+import os
+import secrets
+from PIL import Image
 from flask import render_template, request, flash, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, current_user, login_required
-#, logout_user, 
-from .forms import RegisterForm, LoginForm, OrderForm
+
+from .forms import RegisterForm, LoginForm, OrderForm, UpdateAccountForm
 from . import app, db
 
 
@@ -27,6 +30,7 @@ def sign_up():
         hashed_password = generate_password_hash(form.password.data, method='sha256')
         user = User(first_name=form.first_name.data,
                     last_name=form.last_name.data,
+                    username=form.username.data,
                     email=form.email.data,
                     password=hashed_password,
                     role=form.role.data)
@@ -47,18 +51,14 @@ def sign_up():
         else:
             new_user = Fundi(user_id=user.id)
             print('Creating a "fundi" object and logging the user in')
-            db.session.add(new_user)
-            db.session.commit()
-                #login_user(new_user, remember=True)
-            flash('Your account has been created! You can now post a job. You are now able to log in', 'success')
-            return redirect(url_for('login'))
-         #   except:
-                #db.session.rollback()
-                #flash("Fundi or client not Created!")
-         #   finally:
-                #db.session.close()
-            
-    #flash('Something went wrong with validation')
+        db.session.add(new_user)
+        db.session.commit()
+        login_user(new_user, remember=True)
+        flash('Your account has been created! You can now post a job. You are now able to log in', 'success')
+        return redirect(url_for('login'))
+    
+
+    flash('Something went wrong with validation')
     return render_template('sign_up.html', title='Register to Maskani', form=form)
 
 @app.route("/login", methods=['GET', 'POST'])
