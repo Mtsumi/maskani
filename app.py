@@ -106,26 +106,27 @@ def new_order():
         form = OrderForm()
         if form.validate():
             print("form validates")
-            #try:
-            new_order = Order(title=form.title.data,
-                        description=form.description.data,
-                        location=form.location.data,
-                        service=form.service.data,
-                        image_link=form.image_link.data,
-                        price_range=form.price_range.data,
-                        #duration=form.duration.data,
-                        client_id = client.id
-                        )
-            #new_order.set_date_due()
-            print(new_order)
-            db.session.add(new_order)
-            db.session.commit()
-            flash("New order " + request.form["title"] + " was successfully listed!")
-            #except Exception:
-                #db.session.rollback()
-            #    flash("Order was not successfully listed.")
-            #finally:
-                #db.session.close()
+            try:
+                new_order = Order(title=form.title.data,
+                            description=form.description.data,
+                            location=form.location.data,
+                            service=form.service.data,
+                            image_link=form.image_link.data,
+                            price_range=form.price_range.data,
+                            client_id = client.id
+                            #duration=form.duration.data,
+                            )
+                #new_order.set_date_due()
+                print(new_order)
+                db.session.add(new_order)
+                db.session.commit()
+                flash("New order " + request.form["title"] + " was successfully listed!")
+            except Exception:
+                db.session.rollback()
+                flash("Order was not successfully listed.")
+            finally:
+                db.session.close()
+                return redirect(url_for('myorders'))
         print("<h1>Form Validation failed<h1>")
 
         return render_template("new_order.html", title='Post a job', form=form, name=name )

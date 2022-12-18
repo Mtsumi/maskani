@@ -86,7 +86,7 @@ class Order(db.Model):
 	date_due = db.Column(db.DateTime, nullable=False, default=datetime.now() + timedelta(hours=12))
 	
 	client_id = db.Column(db.Integer, db.ForeignKey("clients.id"), nullable=False)
-	fundi_id = db.Column(db.Integer, db.ForeignKey("fundis.id"), nullable=False)
+	fundi_id = db.Column(db.Integer, db.ForeignKey("fundis.id"), nullable=True)
 
 	# def set_date_due(self):
 	# 	dur = int(self.duration)

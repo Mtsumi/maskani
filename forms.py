@@ -45,7 +45,7 @@ class OrderForm(FlaskForm):
     services = [('plumbing', 'Plumbing'), ('electrical', 'Electrical'), ('carpentry', 'Carpentry'), ('painting', 'Painting'), ('tailoring', 'Tailoring'), ('barber', 'Barber'), ('casual', 'Just need some hands')]
     service = SelectField('Service Needed', validators=[DataRequired()], choices=services)
     image_link =  StringField('Image', default='', validators=[Optional(), URL()])
-    duration = SelectField('Due in', validators=[DataRequired()], choices=[('1', '1 hr'), ('2', '2 hrs'), ('4', '4 hrs'), ('6', '6 hrs'), ('8', '8 hrs'), ('12', '12 hrs')])
+    #duration = SelectField('Due in', validators=[DataRequired()], choices=[('1', '1 hr'), ('2', '2 hrs'), ('4', '4 hrs'), ('6', '6 hrs'), ('8', '8 hrs'), ('12', '12 hrs')])
     prices = [('100-300', 'Ksh 100 - 300'), ('300-500', 'Ksh 300 - 500'), ('500-800', 'Ksh 500 - 800'), ('1000', 'Ksh 1000+') ]
     price_range = SelectField('Price Range', validators=[DataRequired()], choices=prices)
     submit = SubmitField('Submit')
