@@ -8,7 +8,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/dash.css') }}">
 
     {% if title %}
         <title>Maskani - {{ title }}</title>
@@ -41,27 +41,6 @@
                 </div>
               </div>
             </div>
-            
-            
-            </div>
-<<<<<<< HEAD
-          
-=======
-                  <!-- Navbar Right Side -->
-            <div class="navbar-nav1">
-              <div class="dropdown">
-                <button class="dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Hi {{ name }}
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  <a class="dropdown-item" href="{{ url_for('sign_up') }}">Sign Up</a>
-                  <a class="dropdown-item" href="{{ url_for('login') }}">Log In</a>
-                </div>
-              </div>
-            </div>
-            
->>>>>>> ad4b601977782492d56bbf1d3e3d37769df8c502
-            
           </div>
         </div>
         

@@ -3,8 +3,7 @@ import secrets
 from PIL import Image
 from flask import render_template, request, flash, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, current_user, login_required
-#, logout_user, 
+from flask_login import login_user, current_user, login_required, logout_user 
 from .forms import RegisterForm, LoginForm, OrderForm
 
 from .forms import RegisterForm, LoginForm, OrderForm, UpdateAccountForm
@@ -26,22 +25,22 @@ def sign_up():
         return redirect(url_for('dashboard'))
     form = RegisterForm()
     if form.validate_on_submit():
-        #try :
-        hashed_password = generate_password_hash(form.password.data, method='sha256')
-        user = User(first_name=form.first_name.data,
-                    last_name=form.last_name.data,
-                    username=form.username.data,
-                    email=form.email.data,
-                    password=hashed_password,
-                    role=form.role.data)
-        db.session.add(user)
-        db.session.commit()
-        #except:
-        #db.session.rollback()
-        #flash("User not Created!")
-        #finally:
-        #db.session.close()
-        #  try:
+        try :
+            hashed_password = generate_password_hash(form.password.data, method='sha256')
+            user = User(first_name=form.first_name.data,
+                        last_name=form.last_name.data,
+                        username=form.username.data,
+                        email=form.email.data,
+                        password=hashed_password,
+                        role=form.role.data)
+            db.session.add(user)
+            db.session.commit()
+        except:
+            db.session.rollback()
+            flash("Sign Up failed!")
+        finally:
+            db.session.close()
+        
         if user.role=='client': 
             new_user = Client(user_id=user.id)
             print('Creating a "fundi" object and logging the user in')
@@ -76,6 +75,12 @@ def login():
             return redirect(next_page) if next_page else redirect(url_for('dashboard'))
         flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Maskani Login', form=form)
+
+@app.route("/logout")
+def logout():
+    logout_user()
+
+
 
 @app.route("/dashboard")
 @login_required
@@ -114,9 +119,7 @@ def new_order():
                             image_link=form.image_link.data,
                             price_range=form.price_range.data,
                             client_id = client.id
-                            #duration=form.duration.data,
                             )
-                #new_order.set_date_due()
                 print(new_order)
                 db.session.add(new_order)
                 db.session.commit()

@@ -81,31 +81,7 @@ body {
   .account-heading {
     font-size: 2.5rem;
   }
-  .navbar-nav1 {
-    position: absolute;
-    right: 0;
-    float: right;
-    margin-right: 10px;
-    font-size: 18px;
-    padding: 10px 15px;
-    border-radius: 5px;
-  }
-  .dropdown-toggle {
-    font-size: 18px;
-    padding: 10px 15px;
-    border-radius: 5px;
-  }
-  .left-side {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    display: block;
-  }
-  .left-side button {
-    display: block;
-  }
-  .navbar-nav {
+  /* .navbar-nav {
     position: absolute;
     right: 0;
     float: left;
@@ -113,4 +89,4 @@ body {
     font-size: 18px;
     padding: 10px 15px;
     border-radius: 5px;
-  }
+  } */
