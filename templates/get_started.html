@@ -56,8 +56,8 @@
 </head>
 <body>
 
-  <button class="clientbtn">Post a Job!</button>
-  <button class="fundibtn">Sign Up as a Fundi!</button>
+  <a href="{{ url_for('client_sign_up') }}"><button class="clientbtn" >Post a Job!</button></a>
+  <a href="{{ url_for('fundi_sign_up') }}"><button class="fundibtn" >Sign Up as a Fundi!</button></a>
 </body>
 
 {% endblock %}

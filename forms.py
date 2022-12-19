@@ -27,7 +27,6 @@ class RegisterForm(FlaskForm):
     email = StringField('Email', validators=[InputRequired(), Email(message='Invalid email'), Length(max=50)])
     password = PasswordField('Password', validators=[InputRequired(), Length(min=8, max=200)])
     choices = [('client', 'Client'), ('fundi', 'Fundi')]
-    role = SelectField('Role', validators=[DataRequired()], choices=choices)
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Sign Up')
 
