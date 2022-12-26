@@ -3,7 +3,7 @@ import secrets
 from PIL import Image
 from flask import render_template, request, flash, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, current_user, login_required
+from flask_login import login_user, current_user, login_required,logout_user
 #, logout_user, 
 from .forms import RegisterForm, LoginForm, OrderForm
 
@@ -51,8 +51,8 @@ def sign_up():
         else:
             new_user = Fundi(user_id=user.id)
             print('Creating a "fundi" object and logging the user in')
-        db.session.add(new_user)
-        db.session.commit()
+            db.session.add(new_user)
+            db.session.commit()
         login_user(new_user, remember=True)
         flash('Your account has been created! You can now post a job. You are now able to log in', 'success')
         return redirect(url_for('login'))
@@ -76,6 +76,11 @@ def login():
             return redirect(next_page) if next_page else redirect(url_for('dashboard'))
         flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Maskani Login', form=form)
+
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
 @app.route("/dashboard")
 @login_required
@@ -141,6 +146,9 @@ def account():
     if current_user.is_authenticated:
         # Get the currently logged-in user object
         user = current_user
+        #creating a variable for rendering user in jinja template.
+        name = user.username
+        #creating an instance of UpdateAccountForm
         form = UpdateAccountForm()
         if form.validate_on_submit():
             # Update the user's data with the form data
@@ -167,7 +175,7 @@ def account():
             form.email.data = user.email
         image_link = url_for('static', filename='img/' + user.image_link)
         return render_template('account.html', title='Account',
-                            image_link=image_link, form=form)
+                            image_link=image_link, form=form, name=name)
 
 def save_picture(form_picture):
     random_hex = secrets.token_hex(8)
