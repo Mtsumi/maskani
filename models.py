@@ -77,7 +77,7 @@ class Order(db.Model):
 	description = db.Column(db.String(500), nullable=False)
 	location = db.Column(db.String(50), nullable=False)
 	price_range = db.Column(db.String(50), nullable=False)
-	image_link = db.Column(db.String(50), nullable=True)
+	image_link = db.Column(db.String(500), nullable=True)
 	status = db.Column(db.Boolean, nullable=False, default=False)
 	service = db.Column(db.String, nullable=False)
 	completed = db.Column(db.Boolean, nullable=False, default=False)
