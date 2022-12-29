@@ -1,10 +1,12 @@
 import os
 import secrets
 from PIL import Image
-from flask import render_template, request, flash, redirect, url_for
+from flask import render_template, request, flash, redirect, url_for,abort
+from .models import Order
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, current_user, login_required, logout_user 
-from .forms import RegisterForm, LoginForm, OrderForm
+
+#, logout_user, 
 
 from .forms import RegisterForm, LoginForm, OrderForm, UpdateAccountForm
 from . import app, db
@@ -36,6 +38,9 @@ def client_sign_up():
             db.session.add(user)
             db.session.commit()
             print('Creating a "client" object and logging the user in')
+            client = Client(user_id=user.id)
+            db.session.add(client)
+            db.session.commit()
             flash('Your account has been created! You can now post a job. You are now able to log in', 'success')
         except:
             db.session.rollback()
@@ -90,8 +95,7 @@ def login():
 @app.route("/logout")
 def logout():
     logout_user()
-
-
+    return redirect(url_for('index'))
 
 @app.route("/dashboard")
 @login_required
@@ -112,18 +116,24 @@ def dashboard():
 @login_required
 def new_order():
     if current_user.is_authenticated:
+        #creating a variable user_id an initialize with current_user id
         user_id = current_user.id
+        #print the user_id 
         print(user_id)
+        #Query the client and check if user_id(foreign key from client table) =user_is
         client = Client.query.filter_by(user_id=user_id).first()
+        #print the client varible
         print(client)   
         print(f"client ID is {client.id}")
         name = current_user.first_name
         print(f"Client name is {name}")
+        #creating an instance of the form
         form = OrderForm()
-        if form.validate():
+        if form.validate_on_submit():
             print("form validates")
+            #validate the field data before exception
             try:
-                new_order = Order(title=form.title.data,
+                order = Order(title=form.title.data,
                             description=form.description.data,
                             location=form.location.data,
                             service=form.service.data,
@@ -131,8 +141,9 @@ def new_order():
                             price_range=form.price_range.data,
                             client_id = client.id
                             )
-                print(new_order)
-                db.session.add(new_order)
+                print(order)
+                #A_dd and commit the order properties into oder object in the database
+                db.session.add(order)
                 db.session.commit()
                 flash("New order " + request.form["title"] + " was successfully listed!")
             except Exception:
@@ -148,13 +159,15 @@ def new_order():
 
     return ("<h1>User isn't logged in<h1>")
 
-
 @app.route("/clients/account", methods=['GET', 'POST'])
 @login_required
 def account():
     if current_user.is_authenticated:
         # Get the currently logged-in user object
         user = current_user
+        #creating a variable for rendering user in jinja template.
+        name = user.username
+        #creating an instance of UpdateAccountForm
         form = UpdateAccountForm()
         if form.validate_on_submit():
             # Update the user's data with the form data
@@ -181,7 +194,7 @@ def account():
             form.email.data = user.email
         image_link = url_for('static', filename='img/' + user.image_link)
         return render_template('account.html', title='Account',
-                            image_link=image_link, form=form)
+                            image_link=image_link, form=form, name=name)
 
 def save_picture(form_picture):
     random_hex = secrets.token_hex(8)
@@ -199,7 +212,49 @@ def save_picture(form_picture):
 @app.route("/clients/myorders")
 @login_required
 def myorders():
-    return "<h1>My favourite Gigs on My order Page</h1>"
+    #creating a variable and initializing it with current_id
+    user_id = current_user.id
+    #Query the client and compare the User_id = user_id
+    client = Client.query.filter_by(user_id=user_id).first()
+
+    orders = Order.query.filter_by(client_id=client.id)
+    return render_template('myorders.html', orders=orders)
+
+@app.route("/order/<int:order_id>/update", methods=['GET', 'POST'])
+@login_required
+def update_order(order_id):
+    order = Order.query.get_or_404(order_id)
+    if order.user != current_user:
+        abort(403)
+    form = OrderForm()
+    if form.validate_on_submit():
+        order.title = form.title.data
+        order.description = form.description.data
+        db.session.commit()
+        flash('Your Order has been updated!', 'success')
+        return redirect(url_for('order', order_id=order.id))
+    elif request.method == 'GET':
+        form.title.data = order.title
+        form.description.data = order.description
+    return render_template('new_order.html', title='Update Order',
+                           form=form, legend='Update Order')
+
+@app.route("/order/<int:order_id>")
+def order(order_id):
+    order = Order.query.get_or_404(order_id)
+    return render_template('order.html', title=order.title, order=order)
+
+@app.route("/order/<int:order_id>/delete", methods=['POST'])
+@login_required
+def delete_order(order_id):
+    order = Order.query.get_or_404(order_id)
+    if order.user != current_user:
+        abort(403)
+    db.session.delete(order)
+    db.session.commit()
+    flash('Your Order has been deleted!', 'success')
+    return redirect(url_for('myorders'))
+
 
 @app.route("/about")
 def about():
@@ -217,10 +272,15 @@ def edit_client():
 def edit_fundi():
     return "<h1> This is the where Fundi comes after login <h1>"
 
+
+
+
 @app.route("/fundis/mywork")
 @login_required
 def mywork():
-    return "<h1>My Jobs</h1>"
+    orders = Order.query.all()
+  
+    return render_template('myorders.html', orders=orders)
 
 @app.route("/get_started")
 def get_started():
