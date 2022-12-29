@@ -200,7 +200,7 @@ def save_picture(form_picture):
     random_hex = secrets.token_hex(8)
     _, f_ext = os.path.splitext(form_picture.filename)
     picture_fn = random_hex + f_ext
-    picture_path = os.path.join(app.root_path, 'static/img', picture_fn)
+    picture_path = os.path.join(app.root_path, 'static/img/', picture_fn)
 
     output_size = (125, 125)
     i = Image.open(form_picture)
@@ -215,10 +215,12 @@ def myorders():
     #creating a variable and initializing it with current_id
     user_id = current_user.id
     #Query the client and compare the User_id = user_id
-    client = Client.query.filter_by(user_id=user_id).first()
+    client = Client.query.filter_by(user_id=user_id).first_or_404()
 
     orders = Order.query.filter_by(client_id=client.id)
     return render_template('myorders.html', orders=orders)
+
+    
 
 @app.route("/order/<int:order_id>/update", methods=['GET', 'POST'])
 @login_required
@@ -278,10 +280,25 @@ def edit_fundi():
 @app.route("/fundis/mywork")
 @login_required
 def mywork():
-    orders = Order.query.all()
-  
+    #orders = Order.query.all()
+    page = request.args.get('page', 1, type=int)
+    orders = Order.query.order_by(Order.date_created.desc()).paginate(page=page, per_page=5)
     return render_template('myorders.html', orders=orders)
 
 @app.route("/get_started")
 def get_started():
     return render_template("get_started.html")
+
+
+@app.route("/user/<string:username>")
+def client_orders(username):
+    #create a query for specific user---using thr username as argument at the function
+    page = request.args.get('page', 1, type=int)
+    #create a varible that will initialize the user,that we need to query---with first means get the first username ,if nun return 404
+    user = User.query.filter_by(username=username).first_or_404()
+    #Filter the order --using valiable orders using the user as backref and assign to variable user
+    #Using the backslash--breakes th code to multiple line rather than making it longer.
+    orders = Order.query.filter_by(user=user)\
+        .order_by(Order.date_posted.desc())\
+        .paginate(page=page, per_page=5)
+    return render_template('client_orders.html', orders=orders, user=user)
