@@ -215,7 +215,7 @@ def myorders():
     #creating a variable and initializing it with current_id
     user_id = current_user.id
     #Query the client and compare the User_id = user_id
-    client = Client.query.filter_by(user_id=user_id).first_or_404()
+    client = Client.query.filter_by(user_id=user_id).first()
 
     orders = Order.query.filter_by(client_id=client.id)
     return render_template('myorders.html', orders=orders)
@@ -280,17 +280,26 @@ def edit_fundi():
 @app.route("/fundis/mywork")
 @login_required
 def mywork():
-    #orders = Order.query.all()
-    page = request.args.get('page', 1, type=int)
-    orders = Order.query.order_by(Order.date_created.desc()).paginate(page=page, per_page=5)
-    return render_template('myorders.html', orders=orders)
+    if current_user.is_authenticated:
+        #creating a variable user_id an initialize with current_user id
+        user_id = current_user.id
+        #print the user_id 
+        print(user_id)
+        #Query the client and check if user_id(foreign key from client table) =user_is
+        client = Client.query.filter_by(user_id=user_id).first()
+        #print the client varible
+        #orders = Order.query.all()
+        page = request.args.get('page', 1, type=int )
+    
+        orders = Order.query.order_by(Order.date_created.desc()).paginate(page=page, per_page=4)
+    return render_template('client_orders.html', orders=orders, client=client)
 
 @app.route("/get_started")
 def get_started():
     return render_template("get_started.html")
 
 
-@app.route("/user/<string:username>")
+@app.route("/client/<string:username>")
 def client_orders(username):
     #create a query for specific user---using thr username as argument at the function
     page = request.args.get('page', 1, type=int)
