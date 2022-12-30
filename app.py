@@ -205,6 +205,8 @@ def myorders():
     client = Client.query.filter_by(user_id=user_id).first()
 
     orders = Order.query.filter_by(client_id=client.id)
+    
+
     return render_template('myorders.html', orders=orders)
 
 @app.route("/order/<int:order_id>/update", methods=['GET', 'POST'])
