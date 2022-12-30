@@ -37,6 +37,9 @@ def client_sign_up():
             db.session.add(user)
             db.session.commit()
             print('Creating a "client" object and logging the user in')
+            client = Client(user_id=user.id)
+            db.session.add(client)
+            db.session.commit()
             flash('Your account has been created! You can now post a job. You are now able to log in', 'success')
         except:
             db.session.rollback()
