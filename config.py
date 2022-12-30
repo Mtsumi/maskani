@@ -11,8 +11,8 @@ class Config(object):
 
     # Connect to the database
     DATABASE_NAME = 'maskani'
-    username = 'oyaro'
-    password = 'serverless'
+    username = 'postgres'
+    password = 'ikxi0000'
     url = 'localhost:5432'
     SQLALCHEMY_DATABASE_URI = "postgresql://{}:{}@{}/{}".format(
         username,
