@@ -5,12 +5,11 @@
           <img class="rounded-circle article-img" src="{{ url_for('static', filename='img/' + order.user.image_link) }}">
           <div class="media-body">
             <div class="article-metadata">
-              <a class="mr-2" href="#">{{ order.user.first_name }}</a>
+              <a class="mr-2" href="#">{{ order.user.username }}</a>
               <small class="text-muted">{{ order.date_created.strftime('%Y-%m-%d') }}</small>
             </div>
             <h2><a class="article-title" href="{{ url_for('order', order_id=order.id) }}">{{ order.title }}</a></h2>
             <p class="article-content">{{ order.description }}</p>
-            <p class="article-content">{{ order.image_link }}</p>
           </div>
         </article>
     {% endfor %}
