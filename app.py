@@ -1,13 +1,15 @@
 import os
 import secrets
-from sqlalchemy import func
 from PIL import Image
-from flask import render_template, request, flash, redirect, url_for
+from flask import render_template, request, flash, redirect, url_for,abort
+from .models import Order
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, current_user, login_required, logout_user 
-from .forms import RegisterForm, LoginForm, OrderForm
 
-from .forms import RegisterForm, LoginForm, OrderForm, UpdateAccountForm
+#, logout_user, 
+
+from .forms import (RegisterForm, LoginForm, OrderForm, UpdateAccountForm,
+                    RequestResetForm,ResetPasswordForm)
 from . import app, db
 
 from .models import *
@@ -94,8 +96,7 @@ def login():
 @app.route("/logout")
 def logout():
     logout_user()
-
-
+    return redirect(url_for('index'))
 
 @app.route("/dashboard")
 @login_required
@@ -116,17 +117,24 @@ def dashboard():
 @login_required
 def new_order():
     if current_user.is_authenticated:
+        #creating a variable user_id an initialize with current_user id
         user_id = current_user.id
+        #print the user_id 
         print(user_id)
+        #Query the client and check if user_id(foreign key from client table) =user_is
         client = Client.query.filter_by(user_id=user_id).first()
+        #print the client varible
         print(client)   
         print(f"client ID is {client.id}")
         name = current_user.first_name
         print(f"Client name is {name}")
+        #creating an instance of the form
         form = OrderForm()
-        if form.validate():
+        if form.validate_on_submit():
             print("form validates")
-            new_order = Order(title=form.title.data,
+            #validate the field data before exception
+            try:
+                order = Order(title=form.title.data,
                             description=form.description.data,
                             location=form.location.data,
                             service=form.service.data,
@@ -134,16 +142,17 @@ def new_order():
                             price_range=form.price_range.data,
                             client_id = client.id
                             )
-            print(new_order)
-            db.session.add(new_order)
-            db.session.commit()
-            flash("New order " + request.form["title"] + " was successfully listed!")
-            #except Exception:
-            #    db.session.rollback()
-            #    flash("Order was not successfully listed.")
-            #finally:
-            #    db.session.close()
-            return redirect(url_for('myorders'))
+                print(order)
+                #A_dd and commit the order properties into oder object in the database
+                db.session.add(order)
+                db.session.commit()
+                flash("New order " + request.form["title"] + " was successfully listed!")
+            except Exception:
+                db.session.rollback()
+                flash("Order was not successfully listed.")
+            finally:
+                db.session.close()
+                return redirect(url_for('myorders'))
         print("<h1>Form Validation failed<h1>")
 
         return render_template("new_order.html", title='Post a job', form=form, name=name )
@@ -151,13 +160,15 @@ def new_order():
 
     return ("<h1>User isn't logged in<h1>")
 
-
 @app.route("/clients/account", methods=['GET', 'POST'])
 @login_required
 def account():
     if current_user.is_authenticated:
         # Get the currently logged-in user object
         user = current_user
+        #creating a variable for rendering user in jinja template.
+        name = user.username
+        #creating an instance of UpdateAccountForm
         form = UpdateAccountForm()
         if form.validate_on_submit():
             # Update the user's data with the form data
@@ -184,13 +195,13 @@ def account():
             form.email.data = user.email
         image_link = url_for('static', filename='img/' + user.image_link)
         return render_template('account.html', title='Account',
-                            image_link=image_link, form=form)
+                            image_link=image_link, form=form, name=name)
 
 def save_picture(form_picture):
     random_hex = secrets.token_hex(8)
     _, f_ext = os.path.splitext(form_picture.filename)
     picture_fn = random_hex + f_ext
-    picture_path = os.path.join(app.root_path, 'static/img', picture_fn)
+    picture_path = os.path.join(app.root_path, 'static/img/', picture_fn)
 
     output_size = (125, 125)
     i = Image.open(form_picture)
@@ -208,9 +219,8 @@ def myorders():
     client = Client.query.filter_by(user_id=user_id).first()
 
     orders = Order.query.filter_by(client_id=client.id)
-    
-
     return render_template('myorders.html', orders=orders)
+    
 
 @app.route("/order/<int:order_id>/update", methods=['GET', 'POST'])
 @login_required
@@ -236,13 +246,17 @@ def order(order_id):
     order = Order.query.get_or_404(order_id)
     return render_template('order.html', title=order.title, order=order)
 
-    for order in orders:
-        data.append({
-            "Order Title": order.title,
-            "Order Description": order.description,
+@app.route("/order/<int:order_id>/delete", methods=['POST'])
+@login_required
+def delete_order(order_id):
+    order = Order.query.get_or_404(order_id)
+    if order.user != current_user:
+        abort(403)
+    db.session.delete(order)
+    db.session.commit()
+    flash('Your Order has been deleted!', 'success')
+    return redirect(url_for('myorders'))
 
-        })
-    return "<h1>My favourite Gigs on My order Page</h1>"
 
 @app.route("/about")
 def about():
@@ -260,11 +274,64 @@ def edit_client():
 def edit_fundi():
     return "<h1> This is the where Fundi comes after login <h1>"
 
+
+
+
 @app.route("/fundis/mywork")
 @login_required
 def mywork():
-    return "<h1>My Jobs</h1>"
+    if current_user.is_authenticated:
+        #creating a variable user_id an initialize with current_user id
+        user_id = current_user.id
+        #print the user_id 
+        print(user_id)
+        #Query the client and check if user_id(foreign key from client table) =user_is
+        client = Client.query.filter_by(user_id=user_id).first()
+        #print the client varible
+        #orders = Order.query.all()
+        page = request.args.get('page', 1, type=int )
+    
+        orders = Order.query.order_by(Order.date_created.desc()).paginate(page=page, per_page=4)
+    return render_template('client_orders.html', orders=orders, client=client)
 
 @app.route("/get_started")
 def get_started():
     return render_template("get_started.html")
+
+@app.route("/client/<string:username>")
+def client_orders(username):
+    
+    if current_user.is_authenticated:
+        #creating a variable user_id an initialize with current_user id
+        user_id = current_user.id
+        #print the user_id 
+        print(user_id)
+        
+        #Query the client and check if user_id(foreign key from client table) =user_is
+        
+        client = Client.query.filter_by(user_id=user_id).first()
+        
+        #print the client varible
+        #create a query for specific user---using thr username as argument at the function
+        page = request.args.get('page', 1, type=int)
+        #create a varible that will initialize the user,that we need to query---with first means get the first username ,if nun return 404
+        user = User.query.filter_by(username=username).first_or_404()
+        print(username)
+        #Filter the order --using valiable orders using the user as backref and assign to variable user
+        #Using the backslash--breakes th code to multiple line rather than making it longer.
+        orders = Order.query.filter_by(client=client)\
+            .order_by(Order.date_created.desc())\
+            .paginate(page=page, per_page=5)
+    return render_template('fundi_jobs.html', orders=orders, user=user)
+
+@app.route("/client/reset_password", methods=['GET', 'POST'])
+def reset_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
+    form = RequestResetForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        send_reset_email(user)
+        flash('An email has been sent with instructions to reset your password.', 'info')
+        return redirect(url_for('login'))
+    return render_template('reset_request.html', title='Reset Password', form=form)
