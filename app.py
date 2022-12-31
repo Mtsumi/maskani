@@ -8,7 +8,8 @@ from flask_login import login_user, current_user, login_required, logout_user
 
 #, logout_user, 
 
-from .forms import RegisterForm, LoginForm, OrderForm, UpdateAccountForm
+from .forms import (RegisterForm, LoginForm, OrderForm, UpdateAccountForm,
+                    RequestResetForm,ResetPasswordForm)
 from . import app, db
 
 from .models import *
@@ -219,7 +220,6 @@ def myorders():
 
     orders = Order.query.filter_by(client_id=client.id)
     return render_template('myorders.html', orders=orders)
-
     
 
 @app.route("/order/<int:order_id>/update", methods=['GET', 'POST'])
@@ -298,16 +298,40 @@ def mywork():
 def get_started():
     return render_template("get_started.html")
 
-
 @app.route("/client/<string:username>")
 def client_orders(username):
-    #create a query for specific user---using thr username as argument at the function
-    page = request.args.get('page', 1, type=int)
-    #create a varible that will initialize the user,that we need to query---with first means get the first username ,if nun return 404
-    user = User.query.filter_by(username=username).first_or_404()
-    #Filter the order --using valiable orders using the user as backref and assign to variable user
-    #Using the backslash--breakes th code to multiple line rather than making it longer.
-    orders = Order.query.filter_by(user=user)\
-        .order_by(Order.date_posted.desc())\
-        .paginate(page=page, per_page=5)
-    return render_template('client_orders.html', orders=orders, user=user)
+    
+    if current_user.is_authenticated:
+        #creating a variable user_id an initialize with current_user id
+        user_id = current_user.id
+        #print the user_id 
+        print(user_id)
+        
+        #Query the client and check if user_id(foreign key from client table) =user_is
+        
+        client = Client.query.filter_by(user_id=user_id).first()
+        
+        #print the client varible
+        #create a query for specific user---using thr username as argument at the function
+        page = request.args.get('page', 1, type=int)
+        #create a varible that will initialize the user,that we need to query---with first means get the first username ,if nun return 404
+        user = User.query.filter_by(username=username).first_or_404()
+        print(username)
+        #Filter the order --using valiable orders using the user as backref and assign to variable user
+        #Using the backslash--breakes th code to multiple line rather than making it longer.
+        orders = Order.query.filter_by(client=client)\
+            .order_by(Order.date_created.desc())\
+            .paginate(page=page, per_page=5)
+    return render_template('fundi_jobs.html', orders=orders, user=user)
+
+@app.route("/client/reset_password", methods=['GET', 'POST'])
+def reset_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
+    form = RequestResetForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        send_reset_email(user)
+        flash('An email has been sent with instructions to reset your password.', 'info')
+        return redirect(url_for('login'))
+    return render_template('reset_request.html', title='Reset Password', form=form)
